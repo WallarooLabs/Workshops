@@ -5,7 +5,7 @@ from statsmodels.tsa.arima.model import ARIMA
 
 def _fit_model(dataframe):
     model = ARIMA(dataframe['cnt'], 
-                    order=(1, 0, 1)
+                    order=(1, 1, 0)
                     ).fit()
     return model
 
