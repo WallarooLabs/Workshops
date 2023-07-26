@@ -9,6 +9,7 @@ def _fit_model(dataframe):
                     ).fit()
     return model
 
+
 def wallaroo_json(data):
     obj = json.loads(data)
     evaluation_frame = pd.DataFrame.from_dict(obj)

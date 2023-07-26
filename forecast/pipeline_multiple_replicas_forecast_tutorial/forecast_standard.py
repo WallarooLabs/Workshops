@@ -10,26 +10,14 @@ def _fit_model(dataframe):
     return model
 
 
-# def wallaroo_json(data):
-#     obj = json.loads(data)
-#     evaluation_frame = pd.DataFrame.from_dict(obj)
+def wallaroo_json(data):
+    obj = json.loads(data)
+    evaluation_frame = pd.DataFrame.from_dict(obj)
 
-#     nforecast = 7
-#     model = _fit_model(evaluation_frame)
-
-#     forecast =  model.forecast(steps=nforecast).round().to_numpy()
-#     forecast = forecast.astype(int)
-
-#     return {"forecast": forecast.tolist()}
-
-# assuming a dataframe was inserted
-def wallaroo_json(data: pd.DataFrame):
-    data = pd.DataFrame({'cnt': data['cnt'][0]})
-    print(data)
     nforecast = 7
-    model = _fit_model(data)
+    model = _fit_model(evaluation_frame)
 
     forecast =  model.forecast(steps=nforecast).round().to_numpy()
     forecast = forecast.astype(int)
 
-    return pd.DataFrame({"forecast":[forecast]})
+    return {"forecast": forecast.tolist()}
