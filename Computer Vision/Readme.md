@@ -1,0 +1,1 @@
+This is the parent folder for the Computer Vision workshops by use case. 
