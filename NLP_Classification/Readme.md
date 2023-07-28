@@ -1,0 +1,1 @@
+This is the parent repo for the NLP-Classification workshop content. In this repo there are sub repos for the use cases.
