@@ -1,2 +1,9 @@
 .DS_Store
 *.example
+Computer Vision/Retail/models/coco_classes.pickle
+.gitignore
+.gitignore
+Computer Vision/Retail/models/mobilenet.pt
+Computer Vision/Retail/models/mobilenet.pt.onnx
+Computer Vision/Retail/models/frcnn-resnet.pt
+Computer Vision/Retail/models/frcnn-resnet.pt.onnx
