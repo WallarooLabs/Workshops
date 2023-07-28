@@ -4,7 +4,7 @@ import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
 
 def _fit_model(dataframe):
-    model = ARIMA(dataframe['cnt'], 
+    model = ARIMA(dataframe['count'], 
                     order=(0, 1, 1)
                     ).fit()
     return model
