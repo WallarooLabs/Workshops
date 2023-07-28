@@ -1,2 +1,11 @@
 .DS_Store
 *.example
+Computer Vision/Retail/models/coco_classes.pickle
+Computer Vision/Retail/models/mobilenet.pt
+Computer Vision/Retail/models/mobilenet.pt.onnx
+Computer Vision/Retail/models/frcnn-resnet.pt
+Computer Vision/Retail/models/frcnn-resnet.pt.onnx
+Computer Vision/Retail/models/frcnn-resnet.pt.onnx.archive
+Computer Vision/Retail/models/frcnn-resnet.pt.onnx.archive
+Computer Vision/Retail/models/mobilenet.pt.onnx.archive
+Computer Vision/Retail/models2
