@@ -1,5 +1,6 @@
 import wallaroo
 from wallaroo.object import EntityNotFoundError
+import pandas as pd
 
 wl = wallaroo.Client()
 
@@ -43,12 +44,11 @@ print(pipeline)
 
 print(pipeline.status())
 
-inferencedata = {"count": [1526, 1550, 1708, 1005, 1623, 1712, 1530, 1605, 1538, 1746, 1472, 1589, 1913, 1815, 2115, 2475, 2927, 1635, 1812, 1107, 1450, 1917, 1807, 1461, 1969, 2402, 1446, 1851]}
+# inferencedata = {"count": [1526, 1550, 1708, 1005, 1623, 1712, 1530, 1605, 1538, 1746, 1472, 1589, 1913, 1815, 2115, 2475, 2927, 1635, 1812, 1107, 1450, 1917, 1807, 1461, 1969, 2402, 1446, 1851]}
 
-print("Inference Data")
+inferencedata = pd.read_json("./data/testdata_standard.df.json")
 print(inferencedata)
 
-print("Forecast")
 results = pipeline.infer(inferencedata)
 
 print(results)
