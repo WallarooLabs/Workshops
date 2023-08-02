@@ -1,1 +1,0 @@
-This is the repo for the notebooks with code. To be used for assistance in completing the exercise notebooks.

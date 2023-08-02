@@ -1,1 +1,1 @@
-This is the folder for the Computer Vision Retail use case workshop files
+This is the repo for the CV Retail workshop notebooks that have the full code as per the tutorial

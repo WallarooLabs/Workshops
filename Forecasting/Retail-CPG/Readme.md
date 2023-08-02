@@ -1,1 +1,1 @@
-This is the repo for the Retail-CPG Forecasting workshop content
+This is the repo for the Forecasting Retail use case workshop files
