@@ -1,5 +1,6 @@
 import wallaroo
 from wallaroo.object import EntityNotFoundError
+import pandas as pd
 
 wl = wallaroo.Client()
 
@@ -30,6 +31,10 @@ def get_pipeline(name):
         print(f"Pipeline not found:{name}")
     return pipeline
 
+def get_singleton_forecast(df, field):
+    singleton = pd.DataFrame({field: [df[field].values.tolist()]})
+    return singleton
+
 print(f"Workspace: {workspace_name}")
 workspace = get_workspace(workspace_name)
 
@@ -43,12 +48,9 @@ print(pipeline)
 
 print(pipeline.status())
 
-inferencedata = {"count": [1526, 1550, 1708, 1005, 1623, 1712, 1530, 1605, 1538, 1746, 1472, 1589, 1913, 1815, 2115, 2475, 2927, 1635, 1812, 1107, 1450, 1917, 1807, 1461, 1969, 2402, 1446, 1851]}
+sample_count = pd.read_csv('./data/test_data.csv')
+inference_df = get_singleton_forecast(sample_count.loc[2:22], 'count')
 
-print("Inference Data")
-print(inferencedata)
-
-print("Forecast")
-results = pipeline.infer(inferencedata)
+results = pipeline.infer(inference_df)
 
 print(results)
