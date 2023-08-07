@@ -8,9 +8,9 @@ git clone https://github.com/WallarooLabs/csa_demo.git
 
 cd computer-vision/models
 
-Use the following cmd in a terminal
+Use the following cmd in a terminal, preferably in the `./models` directory.
 
-gcloud storage cp gs://wallaroo-model-zoo/open-source/computer-vision/models/* .
+gcloud storage "cp gs://wallaroo-model-zoo/open-source/computer-vision/models/*" .
 
 # Directory contents
 
