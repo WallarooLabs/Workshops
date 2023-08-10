@@ -1487,7 +1487,6 @@ class CVDemo():
         localTime = datetime.now(newYorkTz)
         localTime = localTime.strftime("%H:%M:%S")
         self.print("End Time:"+localTime)
-
     # Reads through each frame in the inVideo,
     # Resizes te frame for the mdoel
     # Runs inference

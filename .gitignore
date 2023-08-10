@@ -1,7 +1,1 @@
 .DS_Store
-Computer Vision/Retail/models/frcnn-resnet.pt
-Computer Vision/Retail/models/frcnn-resnet.pt.onnx
-Computer Vision/Retail/models/coco_classes.pickle
-Computer Vision/Retail/models/mobilenet.pt
-Computer Vision/Retail/models/mobilenet.pt.onnx
-Computer Vision/Retail/models/resnet50_v1.onnx
