@@ -1,6 +1,6 @@
-# Statsmodel Forecast Workshop Notebook 1: Build and Deploy a Model
+# Statsmodel Forecast Tutorial Notebook 1: Build and Deploy a Model
 
-For this workshop, let's pretend that you work for a bike rental company.  You have developed a model to predict the number of rentals for the week following a given date, based on data collected in the company's rental history database.
+For this tutorial, let's pretend that you work for a bike rental company.  You have developed a model to predict the number of rentals for the week following a given date, based on data collected in the company's rental history database.
 
 In this set of exercises, you will build a model to predict house sale prices, and deploy it to Wallaroo.
 
@@ -133,7 +133,7 @@ wl.get_current_workspace()
 
 #### Exercise: Log in and create a workspace
 
-Log into wallaroo, and create a workspace for this workshop. Then set that new workspace to your current workspace.
+Log into wallaroo, and create a workspace for this tutorial. Then set that new workspace to your current workspace.
 Make sure you remember the name that you gave the workspace, as you will need it for later notebooks. Set that workspace to be your working environment.
 
 **Notes**
@@ -155,7 +155,7 @@ import random
 
 suffix= ''.join(random.choice(string.ascii_lowercase) for i in range(4))
 
-workspace_name = f'forecast-model-workshop'
+workspace_name = f'forecast-model-tutorial'
 
 workspace = get_workspace(workspace_name)
 
@@ -163,7 +163,7 @@ wl.set_current_workspace(workspace)
 
 ```
 
-    {'name': 'forecast-model-workshopjohn', 'id': 16, 'archived': False, 'created_by': '0a36fba2-ad42-441b-9a8c-bac8c68d13fa', 'created_at': '2023-08-02T15:50:52.816795+00:00', 'models': [{'name': 'forecast-control-model', 'versions': 2, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 2, 18, 16, 45, 620061, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 2, 15, 50, 54, 223186, tzinfo=tzutc())}, {'name': 'forecast-challenger01-model', 'versions': 2, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 2, 18, 16, 46, 633644, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 2, 15, 50, 55, 208179, tzinfo=tzutc())}, {'name': 'forecast-challenger02-model', 'versions': 2, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 2, 18, 16, 47, 740983, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 2, 15, 50, 56, 291043, tzinfo=tzutc())}], 'pipelines': [{'name': 'forecast-workshop-pipeline', 'create_time': datetime.datetime(2023, 8, 2, 15, 50, 59, 480547, tzinfo=tzutc()), 'definition': '[]'}]}
+    {'name': 'forecast-model-tutorialjohn', 'id': 16, 'archived': False, 'created_by': '0a36fba2-ad42-441b-9a8c-bac8c68d13fa', 'created_at': '2023-08-02T15:50:52.816795+00:00', 'models': [{'name': 'forecast-control-model', 'versions': 2, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 2, 18, 16, 45, 620061, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 2, 15, 50, 54, 223186, tzinfo=tzutc())}, {'name': 'forecast-challenger01-model', 'versions': 2, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 2, 18, 16, 46, 633644, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 2, 15, 50, 55, 208179, tzinfo=tzutc())}, {'name': 'forecast-challenger02-model', 'versions': 2, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 2, 18, 16, 47, 740983, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 2, 15, 50, 56, 291043, tzinfo=tzutc())}], 'pipelines': [{'name': 'forecast-tutorial-pipeline', 'create_time': datetime.datetime(2023, 8, 2, 15, 50, 59, 480547, tzinfo=tzutc()), 'definition': '[]'}]}
 
 ## Deploy a Simple Single-Step Pipeline
 
@@ -286,7 +286,7 @@ bike_day_model = (wl.upload_model(control_model_name,
 
 # create the pipeline
 
-pipeline_name = 'forecast-workshop-pipeline'
+pipeline_name = 'forecast-tutorial-pipeline'
 
 pipeline = wl.build_pipeline(pipeline_name).clear().add_model_step(bike_day_model).deploy()
 

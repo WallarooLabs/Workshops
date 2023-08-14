@@ -1,6 +1,6 @@
-# Workshop Notebook 1: Build and Deploy a Model
+# Tutorial Notebook 1: Build and Deploy a Model
 
-For this workshop, let's pretend that you work for financial institution that determines whether a transaction was more or less likely to be a fraudulent charge based on previous data.
+For this tutorial, let's pretend that you work for financial institution that determines whether a transaction was more or less likely to be a fraudulent charge based on previous data.
 
 In this set of exercises, you will build a model to predict house sale prices, and deploy it to Wallaroo.
 
@@ -38,7 +38,7 @@ import random
 
 #### Exercise: Build a model
 
-This workshop is geared towards a ML model that outputs a single array value.  For example:
+This tutorial is geared towards a ML model that outputs a single array value.  For example:
 
 {
     "prediction": [0.75]
@@ -136,7 +136,7 @@ wl.get_current_workspace()
 
 #### Exercise: Log in and create a workspace
 
-Log into wallaroo, and create a workspace for this workshop. Then set that new workspace to your current workspace.
+Log into wallaroo, and create a workspace for this tutorial. Then set that new workspace to your current workspace.
 Make sure you remember the name that you gave the workspace, as you will need it for later notebooks. Set that workspace to be your working environment.
 
 **Notes**

@@ -1,4 +1,4 @@
-# Workshop Notebook 2: Vetting a Model With Production Experiments
+# Tutorial Notebook 2: Vetting a Model With Production Experiments
 
 So far, we've discussed practices and methods for transitioning an ML model and related artifacts from development to production. However, just the act of pushing a model into production is not the only consideration. In many situations, it's important to vet a model's performance in the real world before fully activating it. Real world vetting can surface issues that may not have arisen during the development stage, when models are only checked using hold-out data.
 
@@ -94,14 +94,14 @@ wl = wallaroo.Client()
 import string
 import random
 
-workspace_name = f'computer-vision-workshop'
+workspace_name = f'computer-vision-tutorial'
 
 workspace = get_workspace(workspace_name)
 
 wl.set_current_workspace(workspace)
 ```
 
-    {'name': 'computer-vision-workshopjohn', 'id': 20, 'archived': False, 'created_by': '0a36fba2-ad42-441b-9a8c-bac8c68d13fa', 'created_at': '2023-08-04T19:16:04.283819+00:00', 'models': [{'name': 'resnet', 'versions': 2, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 5, 17, 25, 35, 579362, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 5, 17, 20, 21, 886290, tzinfo=tzutc())}, {'name': 'mobilenet', 'versions': 5, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 5, 18, 2, 2, 812811, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 4, 19, 19, 46, 286247, tzinfo=tzutc())}, {'name': 'cv-post-process-drift-detection', 'versions': 4, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 5, 18, 2, 4, 862817, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 4, 19, 23, 10, 189958, tzinfo=tzutc())}], 'pipelines': [{'name': 'cv-retail-pipeline', 'create_time': datetime.datetime(2023, 8, 4, 19, 23, 11, 179176, tzinfo=tzutc()), 'definition': '[]'}]}
+    {'name': 'computer-vision-tutorialjohn', 'id': 20, 'archived': False, 'created_by': '0a36fba2-ad42-441b-9a8c-bac8c68d13fa', 'created_at': '2023-08-04T19:16:04.283819+00:00', 'models': [{'name': 'resnet', 'versions': 2, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 5, 17, 25, 35, 579362, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 5, 17, 20, 21, 886290, tzinfo=tzutc())}, {'name': 'mobilenet', 'versions': 5, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 5, 18, 2, 2, 812811, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 4, 19, 19, 46, 286247, tzinfo=tzutc())}, {'name': 'cv-post-process-drift-detection', 'versions': 4, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 5, 18, 2, 4, 862817, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 4, 19, 23, 10, 189958, tzinfo=tzutc())}], 'pipelines': [{'name': 'cv-retail-pipeline', 'create_time': datetime.datetime(2023, 8, 4, 19, 23, 11, 179176, tzinfo=tzutc()), 'definition': '[]'}]}
 
 ## A/B Testing
 

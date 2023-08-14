@@ -60,29 +60,74 @@ fileList = [
         "outputFile": "03-use-case-cv-retail-reference.md"
     },
     {
-        "inputFile": "Forecasting/Retail-CPG/with-code/N1_deploy_a_model-with-code.ipynb",
+        "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N1_deploy_a_model-with-code.ipynb",
         "outputDir": "/wallaroo-use-case-tutorials/forecasting/retail-cpg",
         "outputFile": "01-use-case-forecasting-retail-cpg-reference.md"
     },
     {
-        "inputFile": "Forecasting/Retail-CPG/with-code/N2_production_experiments-with-code.ipynb",
+        "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N2_production_experiments-with-code.ipynb",
         "outputDir": "/wallaroo-use-case-tutorials/forecasting/retail-cpg",
         "outputFile": "02-use-case-forecasting-retail-cpg-reference.md"
     },
     {
-        "inputFile": "Forecasting/Retail-CPG/with-code/N3_drift_detection-with-code.ipynb",
+        "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N3_drift_detection-with-code.ipynb",
         "outputDir": "/wallaroo-use-case-tutorials/forecasting/retail-cpg",
         "outputFile": "03-use-case-forecasting-retail-cpg-reference.md"
     },
     {
-        "inputFile": "Forecasting/Retail-CPG/with-code/N4_automate-data-connections-with-code.ipynb",
+        "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N4_automate-data-connections-with-code.ipynb",
         "outputDir": "/wallaroo-use-case-tutorials/forecasting/retail-cpg",
         "outputFile": "04-use-case-forecasting-retail-cpg-reference.md"
     },
     {
-        "inputFile": "Forecasting/Retail-CPG/with-code/N5_automate-ml-orchestration-with-code.ipynb",
+        "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N5_automate-ml-orchestration-with-code.ipynb",
         "outputDir": "/wallaroo-use-case-tutorials/forecasting/retail-cpg",
         "outputFile": "05-use-case-forecasting-retail-cpg-reference.md"
+    },
+    {
+        "inputFile": "Linear\ Regression/Real\ Estate/Notebooks-with-code/N1_deploy_a_model-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
+        "outputFile": "01-use-case-linear-regression-real-estate-reference.md"
+    },
+    {
+        "inputFile": "Linear\ Regression/Real\ Estate/Notebooks-with-code/N2_production_experiments-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
+        "outputFile": "02-use-case-linear-regression-real-estate-reference.md"
+    },
+    {
+        "inputFile": "Linear\ Regression/Real\ Estate/Notebooks-with-code/N3_validation_rules-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
+        "outputFile": "03-use-case-linear-regression-real-estate-reference.md"
+    },
+    {
+        "inputFile": "Linear\ Regression/Real\ Estate/Notebooks-with-code/N4_drift_detection-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
+        "outputFile": "04-use-case-linear-regression-real-estate-reference.md"
+    },
+    {
+        "inputFile": "Linear\ Regression/Real\ Estate/Notebooks-with-code/N5_automate-data-connections-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
+        "outputFile": "05-use-case-linear-regression-real-estate-reference.md"
+    },
+    {
+        "inputFile": "Linear\ Regression/Real\ Estate/Notebooks-with-code/N6_automate-ml-orchestration-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
+        "outputFile": "06-use-case-linear-regression-real-estate-reference.md"
+    },
+    {
+        "inputFile": "NLP_Classification/Sentiment\ Analysis/Notebooks\ with\ code/N1_deploy_a_model-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/nlp-classification/sentiment-analysis",
+        "outputFile": "01-use-case-nlp-classification-sentiment-analysis-reference.md"
+    },
+    {
+        "inputFile": "NLP_Classification/Sentiment\ Analysis/Notebooks\ with\ code/N2_validation_rules-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/nlp-classification/sentiment-analysis",
+        "outputFile": "02-use-case-nlp-classification-sentiment-analysis-reference.md"
+    },
+    {
+        "inputFile": "NLP_Classification/Sentiment\ Analysis/Notebooks\ with\ code/N3_drift_detection-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/nlp-classification/sentiment-analysis",
+        "outputFile": "03-use-case-nlp-classification-sentiment-analysis-reference.md"
     },
 
 ]
@@ -99,6 +144,10 @@ def format(outputdir, document_file):
     document = re.sub('<div.*?>', '', document)
     document = re.sub(r'<style.*?>.*?</style>', '', document, flags=re.S)
     document = re.sub('</div>', '', document)
+
+    # replace workshop with tutorial
+    document = re.sub('Workshop', 'Tutorial', document)
+    document = re.sub('workshop', 'tutorial', document)
 
     # remove non-public domains
     document = re.sub('wallaroocommunity.ninja', 'wallarooexample.ai', document)

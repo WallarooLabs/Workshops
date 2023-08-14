@@ -1,4 +1,4 @@
-# Workshop Notebook 2: Vetting a Model With Production Experiments
+# Tutorial Notebook 2: Vetting a Model With Production Experiments
 
 So far, we've discussed practices and methods for transitioning an ML model and related artifacts from development to production. However, just the act of pushing a model into production is not the only consideration. In many situations, it's important to vet a model's performance in the real world before fully activating it. Real world vetting can surface issues that may not have arisen during the development stage, when models are only checked using hold-out data.
 

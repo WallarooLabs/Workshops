@@ -1,4 +1,4 @@
-# Workshop Notebook 3: Observability Part 1 - Validation Rules
+# Tutorial Notebook 3: Observability Part 1 - Validation Rules
 
 In the previous notebooks you uploaded the models and artifacts, then deployed the models to production through provisioning workspaces and pipelines. Now you're ready to put your feet up! But to keep your models operational, your work's not done once the model is in production. You must continue to monitor the behavior and performance of the model to insure that the model provides value to the business.
 
@@ -8,7 +8,7 @@ In this notebook, you will learn about adding validation rules to pipelines.
 
 In the blocks below we will preload some required libraries; we will also redefine some of the convenience functions that you saw in the previous notebooks.
 
-After that, you should log into Wallaroo and set your working environment to the workspace that you created for this workshop. Please refer to Notebook 1 to refresh yourself on how to log in and set your working environment to the appropriate workspace.
+After that, you should log into Wallaroo and set your working environment to the workspace that you created for this tutorial. Please refer to Notebook 1 to refresh yourself on how to log in and set your working environment to the appropriate workspace.
 
 ```python
 # preload needed libraries 
@@ -305,7 +305,7 @@ display(multiple_result)
 
 ## Congratulations!
 
-In this workshop you have
+In this tutorial you have
 
 * Set a validation rule on your financial fraud classification pipeline.
 * Detected model predictions that failed the validation rule.

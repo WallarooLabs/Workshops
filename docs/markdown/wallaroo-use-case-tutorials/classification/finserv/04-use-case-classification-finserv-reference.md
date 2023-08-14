@@ -1,4 +1,4 @@
-# Workshop Notebook 4: Observability Part 2 - Drift Detection
+# Tutorial Notebook 4: Observability Part 2 - Drift Detection
 
 In the previous notebook you learned how to add simple validation rules to a pipeline, to monitor whether outputs (or inputs) stray out of some expected range. In this notebook, you will monitor the *distribution* of the pipeline's predictions to see if the model, or the environment that it runs it, has changed.
 
@@ -6,7 +6,7 @@ In the previous notebook you learned how to add simple validation rules to a pip
 
 In the blocks below we will preload some required libraries; we will also redefine some of the convenience functions that you saw in the previous notebooks.
 
-After that, you should log into Wallaroo and set your working environment to the workspace that you created for this workshop. Please refer to Notebook 1 to refresh yourself on how to log in and set your working environment to the appropriate workspace.
+After that, you should log into Wallaroo and set your working environment to the workspace that you created for this tutorial. Please refer to Notebook 1 to refresh yourself on how to log in and set your working environment to the appropriate workspace.
 
 ```python
 # preload needed libraries 
@@ -471,7 +471,7 @@ You can use the assay id later to get the assay results.
 You have now walked through setting up a basic assay and running it over historical data.
 
 ## Congratulations!
-In this workshop you have:
+In this tutorial you have:
 
 * Deployed a single step financial transaction classification pipeline and sent data to it.
 * Compared two financial transaction classification models in an A/B test
@@ -484,7 +484,7 @@ Great job!
 
 ### Cleaning up.
 
-Now that the workshop is complete, don't forget to undeploy your pipeline to free up the resources.
+Now that the tutorial is complete, don't forget to undeploy your pipeline to free up the resources.
 
 ```python
 # blank space to undeploy your pipeline

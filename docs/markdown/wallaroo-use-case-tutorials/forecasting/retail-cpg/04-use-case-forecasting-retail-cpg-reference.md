@@ -139,7 +139,7 @@ import random
 
 suffix= ''.join(random.choice(string.ascii_lowercase) for i in range(4))
 
-workspace_name = f'forecast-model-workshop'
+workspace_name = f'forecast-model-tutorial'
 
 workspace = get_workspace(workspace_name)
 
@@ -149,7 +149,7 @@ control_model_name = 'forecast-control-model'
 
 bike_day_model = get_model(control_model_name)
 
-pipeline_name = 'forecast-workshop-pipeline'
+pipeline_name = 'forecast-tutorial-pipeline'
 
 pipeline = get_pipeline(pipeline_name)
 
@@ -222,7 +222,7 @@ Note that connection names must be unique across the Wallaroo instance - if need
 forecast_connection_input_name = f'bike-rentals-csv'
 forecast_connection_input_type = "HTTP"
 forecast_connection_input_argument = { 
-    "url": "https://raw.githubusercontent.com/WallarooLabs/Workshops/jch-forecast-tutorials/Forecasting/Retail-CPG/data/test_data.csv"
+    "url": "https://raw.githubusercontent.com/WallarooLabs/Tutorials/jch-forecast-tutorials/Forecasting/Retail-CPG/data/test_data.csv"
     }
 
 wl.create_connection(forecast_connection_input_name, forecast_connection_input_type, forecast_connection_input_argument)
@@ -260,7 +260,7 @@ Connections for the entire Wallaroo instance are listed with Wallaroo Client `li
 wl.list_connections()
 ```
 
-<table><tr><th>name</th><th>connection type</th><th>details</th><th>created at</th><th>linked workspaces</th></tr><tr><td>statsmodel-bike-rentals-john</td><td>HTTP</td><td>*****</td><td>2023-08-02T20:38:34.662841+00:00</td><td>['forecast-model-workshopjohn']</td></tr><tr><td>bike-rentals-csv-john</td><td>HTTP</td><td>*****</td><td>2023-08-03T15:40:28.804640+00:00</td><td>[]</td></tr></table>
+<table><tr><th>name</th><th>connection type</th><th>details</th><th>created at</th><th>linked workspaces</th></tr><tr><td>statsmodel-bike-rentals-john</td><td>HTTP</td><td>*****</td><td>2023-08-02T20:38:34.662841+00:00</td><td>['forecast-model-tutorialjohn']</td></tr><tr><td>bike-rentals-csv-john</td><td>HTTP</td><td>*****</td><td>2023-08-03T15:40:28.804640+00:00</td><td>[]</td></tr></table>
 
 ### Get Connection by Name
 
@@ -312,7 +312,7 @@ workspace.add_connection(forecast_connection_input_name)
 workspace.list_connections()
 ```
 
-<table><tr><th>name</th><th>connection type</th><th>details</th><th>created at</th><th>linked workspaces</th></tr><tr><td>statsmodel-bike-rentals-john</td><td>HTTP</td><td>*****</td><td>2023-08-02T20:38:34.662841+00:00</td><td>['forecast-model-workshopjohn']</td></tr><tr><td>bike-rentals-csv-john</td><td>HTTP</td><td>*****</td><td>2023-08-03T15:40:28.804640+00:00</td><td>['forecast-model-workshopjohn']</td></tr></table>
+<table><tr><th>name</th><th>connection type</th><th>details</th><th>created at</th><th>linked workspaces</th></tr><tr><td>statsmodel-bike-rentals-john</td><td>HTTP</td><td>*****</td><td>2023-08-02T20:38:34.662841+00:00</td><td>['forecast-model-tutorialjohn']</td></tr><tr><td>bike-rentals-csv-john</td><td>HTTP</td><td>*****</td><td>2023-08-03T15:40:28.804640+00:00</td><td>['forecast-model-tutorialjohn']</td></tr></table>
 
 ### Retrieve Connection from Workspace
 
@@ -345,7 +345,7 @@ display(forecast_connection)
     <td>Created At</td><td>2023-08-03T15:40:28.804640+00:00</td>
   </tr>
   <tr>
-    <td>Linked Workspaces</td><td>['forecast-model-workshopjohn']</td>
+    <td>Linked Workspaces</td><td>['forecast-model-tutorialjohn']</td>
   </tr>
 </table>
 
@@ -390,7 +390,7 @@ results = pipeline.infer(inference_df)
 display(results)
 ```
 
-    'https://raw.githubusercontent.com/WallarooLabs/Workshops/jch-forecast-tutorials/Forecasting/Retail-CPG/data/test_data.csv'
+    'https://raw.githubusercontent.com/WallarooLabs/Tutorials/jch-forecast-tutorials/Forecasting/Retail-CPG/data/test_data.csv'
 
 <table border="1" class="dataframe">
   <thead>
@@ -418,7 +418,7 @@ display(results)
 You have now walked through setting up a basic assay and running it over historical data.
 
 ## Congratulations!
-In this workshop you have
+In this tutorial you have
 * Deployed a single step house price prediction pipeline and sent data to it.
 * Create a new Wallaroo connection
 * Assigned the connection to a workspace
@@ -429,11 +429,11 @@ Great job!
 
 ### Cleaning up.
 
-Now that the workshop is complete, don't forget to undeploy your pipeline to free up the resources.
+Now that the tutorial is complete, don't forget to undeploy your pipeline to free up the resources.
 
 ```python
 pipeline.undeploy()
 ```
 
-<table><tr><th>name</th> <td>forecast-workshop-pipeline</td></tr><tr><th>created</th> <td>2023-08-02 15:50:59.480547+00:00</td></tr><tr><th>last_updated</th> <td>2023-08-02 20:22:05.264816+00:00</td></tr><tr><th>deployed</th> <td>False</td></tr><tr><th>tags</th> <td></td></tr><tr><th>versions</th> <td>a109a040-c8f2-46dc-8c0b-373ae10d4fa0, dcaec327-1358-42a7-88de-931602a42a72, debc509f-9481-464b-af7f-5c3138a9cdb4, b0d167aa-cc98-440a-8e85-1ae3f089745a, d9e69c40-c83b-48af-b6b9-caafcb85f08b, 186ffdd2-3a8f-40cc-8362-13cc20bd2f46, 535e6030-ebe5-4c79-b5cd-69b161637a99, c5c0218a-800b-4235-8767-64d18208e68a, 4559d934-33b0-4872-a788-4ef27f554482, 94d3e20b-add7-491c-aedd-4eb094a8aebf, ab4e58bf-3b75-4bf6-b6b3-f703fe61e7af, 3773f5c5-e4c5-4e46-a839-6945af15ca13, 3abf03dd-8eab-4a8d-8432-aa85a30c0eda, 5ec5e8dc-7492-498b-9652-b3733e4c87f7, 1d89287b-4eff-47ec-a7bb-8cedaac1f33f</td></tr><tr><th>steps</th> <td>forecast-control-model</td></tr></table>
+<table><tr><th>name</th> <td>forecast-tutorial-pipeline</td></tr><tr><th>created</th> <td>2023-08-02 15:50:59.480547+00:00</td></tr><tr><th>last_updated</th> <td>2023-08-02 20:22:05.264816+00:00</td></tr><tr><th>deployed</th> <td>False</td></tr><tr><th>tags</th> <td></td></tr><tr><th>versions</th> <td>a109a040-c8f2-46dc-8c0b-373ae10d4fa0, dcaec327-1358-42a7-88de-931602a42a72, debc509f-9481-464b-af7f-5c3138a9cdb4, b0d167aa-cc98-440a-8e85-1ae3f089745a, d9e69c40-c83b-48af-b6b9-caafcb85f08b, 186ffdd2-3a8f-40cc-8362-13cc20bd2f46, 535e6030-ebe5-4c79-b5cd-69b161637a99, c5c0218a-800b-4235-8767-64d18208e68a, 4559d934-33b0-4872-a788-4ef27f554482, 94d3e20b-add7-491c-aedd-4eb094a8aebf, ab4e58bf-3b75-4bf6-b6b3-f703fe61e7af, 3773f5c5-e4c5-4e46-a839-6945af15ca13, 3abf03dd-8eab-4a8d-8432-aa85a30c0eda, 5ec5e8dc-7492-498b-9652-b3733e4c87f7, 1d89287b-4eff-47ec-a7bb-8cedaac1f33f</td></tr><tr><th>steps</th> <td>forecast-control-model</td></tr></table>
 

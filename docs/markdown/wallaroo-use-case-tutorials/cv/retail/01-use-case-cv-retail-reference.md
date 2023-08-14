@@ -1,6 +1,6 @@
-# Computer Vision Workshop Notebook 1: Build and Deploy a Model
+# Computer Vision Tutorial Notebook 1: Build and Deploy a Model
 
-For this workshop, let's pretend that you work for a retail store.  You have developed a model that scans images and predicts what items are on a shelf, shopping card, or otherwise.
+For this tutorial, let's pretend that you work for a retail store.  You have developed a model that scans images and predicts what items are on a shelf, shopping card, or otherwise.
 
 In this set of exercises, you will build to recognize images and deploy it to Wallaroo.
 
@@ -152,7 +152,7 @@ wl.get_current_workspace()
 
 #### Exercise: Log in and create a workspace
 
-Log into wallaroo, and create a workspace for this workshop. Then set that new workspace to your current workspace.
+Log into wallaroo, and create a workspace for this tutorial. Then set that new workspace to your current workspace.
 Make sure you remember the name that you gave the workspace, as you will need it for later notebooks. Set that workspace to be your working environment.
 
 **Notes**
@@ -174,7 +174,7 @@ import random
 
 suffix= ''.join(random.choice(string.ascii_lowercase) for i in range(4))
 
-workspace_name = f'computer-vision-workshop'
+workspace_name = f'computer-vision-tutorial'
 
 workspace = get_workspace(workspace_name)
 
@@ -182,7 +182,7 @@ wl.set_current_workspace(workspace)
 
 ```
 
-    {'name': 'computer-vision-workshopjohn', 'id': 20, 'archived': False, 'created_by': '0a36fba2-ad42-441b-9a8c-bac8c68d13fa', 'created_at': '2023-08-04T19:16:04.283819+00:00', 'models': [], 'pipelines': []}
+    {'name': 'computer-vision-tutorialjohn', 'id': 20, 'archived': False, 'created_by': '0a36fba2-ad42-441b-9a8c-bac8c68d13fa', 'created_at': '2023-08-04T19:16:04.283819+00:00', 'models': [], 'pipelines': []}
 
 ## Deploy a Simple Single-Step Pipeline
 
