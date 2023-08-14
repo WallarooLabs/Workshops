@@ -34,15 +34,6 @@ import string
 import random
 
 import pyarrow as pa
-
-import sys
- 
-# setting path - only needed when running this from the `with-code` folder.
-sys.path.append('../')
-
-from CVDemoUtils import CVDemo
-cvDemo = CVDemo()
-cvDemo.COCO_CLASSES_PATH = "../models/coco_classes.pickle"
 ```
 
 ```python
@@ -91,17 +82,33 @@ If needed, log into Wallaroo and go to the workspace that you created in the pre
 
 wl = wallaroo.Client()
 
+wallarooPrefix = "doc-test."
+wallarooSuffix = "wallarooexample.ai"
+
+wl = wallaroo.Client(api_endpoint=f"https://{wallarooPrefix}api.{wallarooSuffix}", 
+                    auth_endpoint=f"https://{wallarooPrefix}keycloak.{wallarooSuffix}", 
+                    auth_type="sso")
+
 import string
 import random
 
 suffix= ''.join(random.choice(string.ascii_lowercase) for i in range(4))
+suffix='john'
 
-workspace_name = f'forecast-model-workshop'
+workspace_name = f'forecast-model-workshop{suffix}'
 
 workspace = get_workspace(workspace_name)
 
 wl.set_current_workspace(workspace)
 ```
+
+    Please log into the following URL in a web browser:
+    
+    	https://doc-test.keycloak.wallarooexample.ai/auth/realms/master/device?user_code=PDKG-QSIF
+    
+    Login successful!
+
+    {'name': 'forecast-model-workshopjohn', 'id': 16, 'archived': False, 'created_by': '0a36fba2-ad42-441b-9a8c-bac8c68d13fa', 'created_at': '2023-08-02T15:50:52.816795+00:00', 'models': [{'name': 'forecast-control-model', 'versions': 3, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 3, 1, 11, 50, 568151, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 2, 15, 50, 54, 223186, tzinfo=tzutc())}, {'name': 'forecast-challenger01-model', 'versions': 3, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 3, 13, 55, 23, 119224, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 2, 15, 50, 55, 208179, tzinfo=tzutc())}, {'name': 'forecast-challenger02-model', 'versions': 3, 'owner_id': '""', 'last_update_time': datetime.datetime(2023, 8, 3, 13, 55, 24, 133756, tzinfo=tzutc()), 'created_at': datetime.datetime(2023, 8, 2, 15, 50, 56, 291043, tzinfo=tzutc())}], 'pipelines': [{'name': 'forecast-workshop-pipeline', 'create_time': datetime.datetime(2023, 8, 2, 15, 50, 59, 480547, tzinfo=tzutc()), 'definition': '[]'}]}
 
 ## A/B Testing
 
@@ -131,14 +138,40 @@ This applies to the Python step if using one similar to the python step provided
 At the end of this exercise, you should have at least one challenger model to compare to your champion model uploaded to your workspace.
 
 ```python
-resnet_model_name = 'resnet'
-resnet_model_path = "../models/frcnn-resnet.pt.onnx"
+challenger01_model_name = "forecast-challenger01-model"
+challenger01_model_path = "../models/forecast_alternate01.py"
 
-resnet_model = wl.upload_model(resnet_model_name, 
-                                  resnet_model_path, 
-                                  framework=Framework.ONNX).configure('onnx', 
-                                                                      batch_config="single"
-                                                                      )
+challenger02_model_name = "forecast-challenger02-model"
+challenger02_model_path = "../models/forecast_alternate02.py"
+
+# Holding on these for later
+input_schema = pa.schema([
+    pa.field('count', pa.list_(pa.int64()))
+])
+
+output_schema = pa.schema([
+    pa.field('forecast', pa.list_(pa.int64())),
+    pa.field('weekly_average', pa.list_(pa.float64()))
+])
+
+# upload the models
+
+challenger01_model = (wl.upload_model(challenger01_model_name, 
+                                 challenger01_model_path, 
+                                 framework=Framework.PYTHON)
+                                 .configure("python", 
+                                 input_schema=input_schema, 
+                                 output_schema=output_schema)
+                )
+
+challenger02_model = (wl.upload_model(challenger02_model_name, 
+                                 challenger02_model_path, 
+                                 framework=Framework.PYTHON)
+                                 .configure("python", 
+                                 input_schema=input_schema, 
+                                 output_schema=output_schema)
+                )
+
 ```
 
 There are a number of considerations to designing an A/B test; you can check out the article [*The What, Why, and How of A/B Testing*](https://wallarooai.medium.com/the-what-why-and-how-of-a-b-testing-64471847cd7e) for more details. In these exercises, we will concentrate on the deployment aspects.  You will need a champion model and  at least one challenger model. You also need to decide on a data split: for example 50-50 between the champion and challenger, or a 2:1 ratio between champion and challenger (two-thirds of the data to the champion, one-third to the challenger).
@@ -169,7 +202,7 @@ def get_pipeline(pname, plist = wl.get_current_workspace().pipelines()):
 ```python
 # use the space here for retrieving the pipeline
 
-pipeline_name = 'cv-retail-pipeline'
+pipeline_name = 'forecast-workshop-pipeline'
 
 pipeline = get_pipeline(pipeline_name)
 ```
@@ -233,7 +266,7 @@ Then creating an A/B test deployment would look something like this:
 
 First get the models used.
 
-```
+```python
 # retrieve handles to the most recent versions 
 # of the champion and challenger models
 champion = get_model("champion")
@@ -244,17 +277,10 @@ challenger = get_model("challenger")
 ```python
 # blank space to get the model(s)
 
-mobilenet_model_name = 'mobilenet'
+control_model_name = 'forecast-control-model'
 
-mobilenet_model = get_model(mobilenet_model_name)
-
-module_post_process_name = 'cv-post-process-drift-detection'
-
-module_post_process = get_model(module_post_process_name)
-
+bike_day_model = get_model(control_model_name)
 ```
-
-<table><tr><th>name</th> <td>forecast-workshop-pipeline</td></tr><tr><th>created</th> <td>2023-08-02 15:50:59.480547+00:00</td></tr><tr><th>last_updated</th> <td>2023-08-03 13:57:36.837514+00:00</td></tr><tr><th>deployed</th> <td>True</td></tr><tr><th>tags</th> <td></td></tr><tr><th>versions</th> <td>46c95b7f-a79e-41ee-8565-578f9c3c20e5, 1ff98a35-3468-4b70-84fc-fe71aed99a75, 73ff8fc2-ca4d-4ea1-887b-0d31190cfe36, f8188956-8b3e-4479-8b15-e8747fe915a6, 33e5cc2c-2bb2-4dc2-8a9e-c058e60f6163, 5d419693-97cc-461b-b72a-a389ab7a001b, 56c78f52-cba5-415c-913a-fee0e1863a90, a109a040-c8f2-46dc-8c0b-373ae10d4fa0, dcaec327-1358-42a7-88de-931602a42a72, debc509f-9481-464b-af7f-5c3138a9cdb4, b0d167aa-cc98-440a-8e85-1ae3f089745a, d9e69c40-c83b-48af-b6b9-caafcb85f08b, 186ffdd2-3a8f-40cc-8362-13cc20bd2f46, 535e6030-ebe5-4c79-b5cd-69b161637a99, c5c0218a-800b-4235-8767-64d18208e68a, 4559d934-33b0-4872-a788-4ef27f554482, 94d3e20b-add7-491c-aedd-4eb094a8aebf, ab4e58bf-3b75-4bf6-b6b3-f703fe61e7af, 3773f5c5-e4c5-4e46-a839-6945af15ca13, 3abf03dd-8eab-4a8d-8432-aa85a30c0eda, 5ec5e8dc-7492-498b-9652-b3733e4c87f7, 1d89287b-4eff-47ec-a7bb-8cedaac1f33f</td></tr><tr><th>steps</th> <td>forecast-control-model</td></tr></table>
 
 Second step is to retrieve the pipeline created in the previous Notebook, then redeploy it with the A/B testing split step.
 
@@ -275,7 +301,7 @@ The above code clears out all the steps of the pipeline and adds a new step with
 
 You can add multiple challengers to an A/B test::
 
-```
+```python
 pipeline.add_random_split([ (2, champion), (1, challenger01), (1, challenger02) ])
 ```
 
@@ -283,7 +309,7 @@ This pipeline will distribute data in the ratio 2:1:1 (or half to the champion, 
 
 You can also create an A/B test deployment from scratch:
 
-```
+```python
 pipeline = wl.build_pipeline("pipeline")
 pipeline.add_random_split([(2, champion), (1, challenger)])
 ```
@@ -313,12 +339,11 @@ At the end of this exercise, you should have an A/B test deployment and be ready
 
 pipeline.undeploy()
 pipeline.clear()
-pipeline.add_random_split([(2, mobilenet_model), (1, resnet_model)])
-pipeline.add_model_step(module_post_process)
+pipeline.add_random_split([(2, bike_day_model), (1, challenger01_model), (1, challenger02_model)])
 pipeline.deploy()
 ```
 
-<table><tr><th>name</th> <td>forecast-workshop-pipeline</td></tr><tr><th>created</th> <td>2023-08-02 15:50:59.480547+00:00</td></tr><tr><th>last_updated</th> <td>2023-08-03 13:59:28.660530+00:00</td></tr><tr><th>deployed</th> <td>True</td></tr><tr><th>tags</th> <td></td></tr><tr><th>versions</th> <td>0d2f2250-9a43-47ce-beef-32371986f798, 46c95b7f-a79e-41ee-8565-578f9c3c20e5, 1ff98a35-3468-4b70-84fc-fe71aed99a75, 73ff8fc2-ca4d-4ea1-887b-0d31190cfe36, f8188956-8b3e-4479-8b15-e8747fe915a6, 33e5cc2c-2bb2-4dc2-8a9e-c058e60f6163, 5d419693-97cc-461b-b72a-a389ab7a001b, 56c78f52-cba5-415c-913a-fee0e1863a90, a109a040-c8f2-46dc-8c0b-373ae10d4fa0, dcaec327-1358-42a7-88de-931602a42a72, debc509f-9481-464b-af7f-5c3138a9cdb4, b0d167aa-cc98-440a-8e85-1ae3f089745a, d9e69c40-c83b-48af-b6b9-caafcb85f08b, 186ffdd2-3a8f-40cc-8362-13cc20bd2f46, 535e6030-ebe5-4c79-b5cd-69b161637a99, c5c0218a-800b-4235-8767-64d18208e68a, 4559d934-33b0-4872-a788-4ef27f554482, 94d3e20b-add7-491c-aedd-4eb094a8aebf, ab4e58bf-3b75-4bf6-b6b3-f703fe61e7af, 3773f5c5-e4c5-4e46-a839-6945af15ca13, 3abf03dd-8eab-4a8d-8432-aa85a30c0eda, 5ec5e8dc-7492-498b-9652-b3733e4c87f7, 1d89287b-4eff-47ec-a7bb-8cedaac1f33f</td></tr><tr><th>steps</th> <td>forecast-control-model</td></tr></table>
+<table><tr><th>name</th> <td>forecast-workshop-pipeline</td></tr><tr><th>created</th> <td>2023-08-02 15:50:59.480547+00:00</td></tr><tr><th>last_updated</th> <td>2023-08-14 15:46:31.432410+00:00</td></tr><tr><th>deployed</th> <td>True</td></tr><tr><th>tags</th> <td></td></tr><tr><th>versions</th> <td>3c5a263b-05de-4305-b121-a9a6b3749dbc, c065b69b-d622-4a7b-93e5-4fcacf62da86, b0a212e3-66b7-4599-9701-f4183045cec6, af0f9c1c-0c28-4aaa-81f5-abb470500960, 980ee03b-694e-47c7-b76b-43b3e927b281, 85af5504-f1e4-4d0d-bd9e-e46891211843, 39b82898-12b6-4a30-ab41-f06cb05c7391, d8edf8c5-07f0-455e-9f34-075b7062f56f, 170402aa-8e83-420e-bee3-51a9fca4a9d9, 14912dd4-5e3a-4314-9e3f-0ea3af3660c1, 3309619d-54b9-4499-8afd-ed7819339b64, 2af1f08c-976c-4d51-9cf6-2cc371788844, 76fbec8d-cebf-40e5-81d5-447170c4a836, c6c10a83-9b6c-449f-a5c3-63b36a3d749b, 436fe308-283f-43b0-a4f0-159c05193d97, eb9e5b9f-41d9-42dc-8e49-13ec4771abad, 4d062242-1477-40fd-bf11-835e6bd62c10, 1f3d774d-7626-4722-b4b8-7dedbaa35803, 12f73035-cf94-4e6c-b2b6-05946ab06aef, b4ec30ef-6724-467e-b42a-d54399198f32, 57e7acf8-b3f0-436b-a236-0b1d6e76ba18, 5697a317-d0e6-402b-9369-7f0e732cc1fa, 5d0cb620-f8ba-4b9d-a81b-0ba333584508, 6b14e208-1319-4bc4-927b-b76a4893d373, 0b44d911-c69e-4030-b481-84e947fe6c70, dc5605d2-bb6a-48d2-b83a-3d77b7e608af, a68819c0-7508-467e-9fc1-60cbf8aaf9e1, b908d302-ce87-4a52-8ef2-b595fac2c67e, 7b94201f-ef5b-4629-ae2f-acf894cb1fcf, dc8bf23f-b598-48c6-bb2d-c5098d264622, 3a8ebc46-6261-4977-8a60-038c99c255d7, 40ab9d3d-ee6c-4f0c-bf38-345385130285, 47792a90-bea8-432a-981f-232bf67288c8, 97b815f3-636b-4424-8be4-3d95bcf32b40, 0d2f2250-9a43-47ce-beef-32371986f798, 46c95b7f-a79e-41ee-8565-578f9c3c20e5, 1ff98a35-3468-4b70-84fc-fe71aed99a75, 73ff8fc2-ca4d-4ea1-887b-0d31190cfe36, f8188956-8b3e-4479-8b15-e8747fe915a6, 33e5cc2c-2bb2-4dc2-8a9e-c058e60f6163, 5d419693-97cc-461b-b72a-a389ab7a001b, 56c78f52-cba5-415c-913a-fee0e1863a90, a109a040-c8f2-46dc-8c0b-373ae10d4fa0, dcaec327-1358-42a7-88de-931602a42a72, debc509f-9481-464b-af7f-5c3138a9cdb4, b0d167aa-cc98-440a-8e85-1ae3f089745a, d9e69c40-c83b-48af-b6b9-caafcb85f08b, 186ffdd2-3a8f-40cc-8362-13cc20bd2f46, 535e6030-ebe5-4c79-b5cd-69b161637a99, c5c0218a-800b-4235-8767-64d18208e68a, 4559d934-33b0-4872-a788-4ef27f554482, 94d3e20b-add7-491c-aedd-4eb094a8aebf, ab4e58bf-3b75-4bf6-b6b3-f703fe61e7af, 3773f5c5-e4c5-4e46-a839-6945af15ca13, 3abf03dd-8eab-4a8d-8432-aa85a30c0eda, 5ec5e8dc-7492-498b-9652-b3733e4c87f7, 1d89287b-4eff-47ec-a7bb-8cedaac1f33f</td></tr><tr><th>steps</th> <td>forecast-challenger01-model</td></tr></table>
 
 The pipeline steps are displayed with the Pipeline `steps()` method.  This is used to verify the current **deployed** steps in the pipeline.
 
@@ -329,7 +354,7 @@ The pipeline steps are displayed with the Pipeline `steps()` method.  This is us
 pipeline.steps()
 ```
 
-    [{'RandomSplit': {'hash_key': None, 'weights': [{'model': {'name': 'forecast-control-model', 'version': '4c5ade81-ae25-4200-a69e-01e24d15fac5', 'sha': '3cd2acdd1f513f46615be7aa5beac16f09903be851e91f20f6dcdead4a48faa0'}, 'weight': 2}, {'model': {'name': 'forecast-challenger01-model', 'version': '1ab84d31-9ad7-4fca-b355-ab45ae48f641', 'sha': '5035aca1989226ec1fa16ab325ed2ca7f88de22813d41f1a343f3acbca181dc4'}, 'weight': 1}, {'model': {'name': 'forecast-challenger02-model', 'version': '3e13030c-27cb-461b-9e5b-3a0671d8a53c', 'sha': '94473071d321c00670dda36c7e7f953f4ed5fd2f33c2188b3a96dace19ece71d'}, 'weight': 1}]}}]
+    [{'RandomSplit': {'hash_key': None, 'weights': [{'model': {'name': 'forecast-control-model', 'version': '4c5ade81-ae25-4200-a69e-01e24d15fac5', 'sha': '3cd2acdd1f513f46615be7aa5beac16f09903be851e91f20f6dcdead4a48faa0'}, 'weight': 2}, {'model': {'name': 'forecast-challenger01-model', 'version': 'c99efea6-70b0-4bb0-a5c6-58f50478ca34', 'sha': '5035aca1989226ec1fa16ab325ed2ca7f88de22813d41f1a343f3acbca181dc4'}, 'weight': 1}, {'model': {'name': 'forecast-challenger02-model', 'version': 'fc12d991-9d79-499f-91cb-a7332cb91af6', 'sha': '94473071d321c00670dda36c7e7f953f4ed5fd2f33c2188b3a96dace19ece71d'}, 'weight': 1}]}}]
 
 Please note that for batch inferences, the entire batch will be sent to the same model. So in order to verify that your pipeline is distributing inferences in the proportion you specified, you will need to send your queries one datum at a time.
 
@@ -384,36 +409,16 @@ If you can align the actual house prices from your test data to the predictions,
 **Don't forget to undeploy your pipeline after you are done**, to free up resources.
 
 ```python
-## blank space to test one inference
-
-##  blank space to create test data, and send some data to your model
-
-##  blank space to create test data, and send some data to your model
-
-image = '../data/images/input/example/dairy_bottles.png'
-
-width, height = 640, 480
-dfImage, resizedImage = cvDemo.loadImageAndConvertToDataframe(image, 
-                                                              width, 
-                                                              height
-                                                              )
-
-results = pipeline.infer(dfImage)
-display(results)
-
-```
-
-```python
 # blank space to send queries to A/B test pipeline and examine the results
 
 sample_count = pd.read_csv('../data/test_data.csv')
 inference_df = get_singleton_forecast(sample_count.loc[2:22], 'count')
 display(inference_df)
 
-results = pipeline.infer(inference_df)
-display(results)
-
-display(get_names(results))
+for i in range(10):
+    results = pipeline.infer(inference_df)
+    display(results.loc[:, ["time", "out.weekly_average"]])
+    display(get_names(results))
 ```
 
 <table border="1" class="dataframe">
@@ -436,17 +441,184 @@ display(get_names(results))
     <tr style="text-align: right;">
       <th></th>
       <th>time</th>
-      <th>out._model_split</th>
-      <th>out.forecast</th>
       <th>out.weekly_average</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>2023-08-03 14:01:11.266</td>
-      <td>[{"name":"forecast-control-model","version":"4c5ade81-ae25-4200-a69e-01e24d15fac5","sha":"3cd2acdd1f513f46615be7aa5beac16f09903be851e91f20f6dcdead4a48faa0"}]</td>
-      <td>[1278, 1295, 1295, 1295, 1295, 1295, 1295]</td>
+      <td>2023-08-14 15:47:55.828</td>
+      <td>[1292.5714285714287]</td>
+    </tr>
+  </tbody>
+</table>
+
+    ['forecast-control-model']
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>out.weekly_average</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2023-08-14 15:47:56.327</td>
+      <td>[1292.5714285714287]</td>
+    </tr>
+  </tbody>
+</table>
+
+    ['forecast-control-model']
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>out.weekly_average</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2023-08-14 15:47:56.793</td>
+      <td>[986.0]</td>
+    </tr>
+  </tbody>
+</table>
+
+    ['forecast-challenger01-model']
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>out.weekly_average</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2023-08-14 15:47:57.249</td>
+      <td>[1292.5714285714287]</td>
+    </tr>
+  </tbody>
+</table>
+
+    ['forecast-control-model']
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>out.weekly_average</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2023-08-14 15:47:57.690</td>
+      <td>[1292.5714285714287]</td>
+    </tr>
+  </tbody>
+</table>
+
+    ['forecast-control-model']
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>out.weekly_average</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2023-08-14 15:47:58.126</td>
+      <td>[1292.5714285714287]</td>
+    </tr>
+  </tbody>
+</table>
+
+    ['forecast-control-model']
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>out.weekly_average</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2023-08-14 15:47:58.582</td>
+      <td>[1048.0]</td>
+    </tr>
+  </tbody>
+</table>
+
+    ['forecast-challenger02-model']
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>out.weekly_average</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2023-08-14 15:47:59.027</td>
+      <td>[1292.5714285714287]</td>
+    </tr>
+  </tbody>
+</table>
+
+    ['forecast-control-model']
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>out.weekly_average</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2023-08-14 15:47:59.487</td>
+      <td>[986.0]</td>
+    </tr>
+  </tbody>
+</table>
+
+    ['forecast-challenger01-model']
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>out.weekly_average</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2023-08-14 15:47:59.938</td>
       <td>[1292.5714285714287]</td>
     </tr>
   </tbody>
@@ -515,12 +687,12 @@ At the end of this exercise, you should have a shadow deployment running multipl
 # blank space to create a shadow deployment
 
 pipeline.clear()
-pipeline.add_shadow_deploy(bike_day_model, [challenger_model_01, challenger_model_02])
+pipeline.add_shadow_deploy(bike_day_model, [challenger01_model, challenger02_model])
 pipeline.deploy()
 
 ```
 
-<table><tr><th>name</th> <td>forecast-workshop-pipeline</td></tr><tr><th>created</th> <td>2023-08-02 15:50:59.480547+00:00</td></tr><tr><th>last_updated</th> <td>2023-08-03 14:03:19.383215+00:00</td></tr><tr><th>deployed</th> <td>True</td></tr><tr><th>tags</th> <td></td></tr><tr><th>versions</th> <td>97b815f3-636b-4424-8be4-3d95bcf32b40, 0d2f2250-9a43-47ce-beef-32371986f798, 46c95b7f-a79e-41ee-8565-578f9c3c20e5, 1ff98a35-3468-4b70-84fc-fe71aed99a75, 73ff8fc2-ca4d-4ea1-887b-0d31190cfe36, f8188956-8b3e-4479-8b15-e8747fe915a6, 33e5cc2c-2bb2-4dc2-8a9e-c058e60f6163, 5d419693-97cc-461b-b72a-a389ab7a001b, 56c78f52-cba5-415c-913a-fee0e1863a90, a109a040-c8f2-46dc-8c0b-373ae10d4fa0, dcaec327-1358-42a7-88de-931602a42a72, debc509f-9481-464b-af7f-5c3138a9cdb4, b0d167aa-cc98-440a-8e85-1ae3f089745a, d9e69c40-c83b-48af-b6b9-caafcb85f08b, 186ffdd2-3a8f-40cc-8362-13cc20bd2f46, 535e6030-ebe5-4c79-b5cd-69b161637a99, c5c0218a-800b-4235-8767-64d18208e68a, 4559d934-33b0-4872-a788-4ef27f554482, 94d3e20b-add7-491c-aedd-4eb094a8aebf, ab4e58bf-3b75-4bf6-b6b3-f703fe61e7af, 3773f5c5-e4c5-4e46-a839-6945af15ca13, 3abf03dd-8eab-4a8d-8432-aa85a30c0eda, 5ec5e8dc-7492-498b-9652-b3733e4c87f7, 1d89287b-4eff-47ec-a7bb-8cedaac1f33f</td></tr><tr><th>steps</th> <td>forecast-control-model</td></tr></table>
+<table><tr><th>name</th> <td>forecast-workshop-pipeline</td></tr><tr><th>created</th> <td>2023-08-02 15:50:59.480547+00:00</td></tr><tr><th>last_updated</th> <td>2023-08-14 15:48:29.360779+00:00</td></tr><tr><th>deployed</th> <td>True</td></tr><tr><th>tags</th> <td></td></tr><tr><th>versions</th> <td>2be416d2-bad8-4210-9fcd-aa1b3f197f64, 3c5a263b-05de-4305-b121-a9a6b3749dbc, c065b69b-d622-4a7b-93e5-4fcacf62da86, b0a212e3-66b7-4599-9701-f4183045cec6, af0f9c1c-0c28-4aaa-81f5-abb470500960, 980ee03b-694e-47c7-b76b-43b3e927b281, 85af5504-f1e4-4d0d-bd9e-e46891211843, 39b82898-12b6-4a30-ab41-f06cb05c7391, d8edf8c5-07f0-455e-9f34-075b7062f56f, 170402aa-8e83-420e-bee3-51a9fca4a9d9, 14912dd4-5e3a-4314-9e3f-0ea3af3660c1, 3309619d-54b9-4499-8afd-ed7819339b64, 2af1f08c-976c-4d51-9cf6-2cc371788844, 76fbec8d-cebf-40e5-81d5-447170c4a836, c6c10a83-9b6c-449f-a5c3-63b36a3d749b, 436fe308-283f-43b0-a4f0-159c05193d97, eb9e5b9f-41d9-42dc-8e49-13ec4771abad, 4d062242-1477-40fd-bf11-835e6bd62c10, 1f3d774d-7626-4722-b4b8-7dedbaa35803, 12f73035-cf94-4e6c-b2b6-05946ab06aef, b4ec30ef-6724-467e-b42a-d54399198f32, 57e7acf8-b3f0-436b-a236-0b1d6e76ba18, 5697a317-d0e6-402b-9369-7f0e732cc1fa, 5d0cb620-f8ba-4b9d-a81b-0ba333584508, 6b14e208-1319-4bc4-927b-b76a4893d373, 0b44d911-c69e-4030-b481-84e947fe6c70, dc5605d2-bb6a-48d2-b83a-3d77b7e608af, a68819c0-7508-467e-9fc1-60cbf8aaf9e1, b908d302-ce87-4a52-8ef2-b595fac2c67e, 7b94201f-ef5b-4629-ae2f-acf894cb1fcf, dc8bf23f-b598-48c6-bb2d-c5098d264622, 3a8ebc46-6261-4977-8a60-038c99c255d7, 40ab9d3d-ee6c-4f0c-bf38-345385130285, 47792a90-bea8-432a-981f-232bf67288c8, 97b815f3-636b-4424-8be4-3d95bcf32b40, 0d2f2250-9a43-47ce-beef-32371986f798, 46c95b7f-a79e-41ee-8565-578f9c3c20e5, 1ff98a35-3468-4b70-84fc-fe71aed99a75, 73ff8fc2-ca4d-4ea1-887b-0d31190cfe36, f8188956-8b3e-4479-8b15-e8747fe915a6, 33e5cc2c-2bb2-4dc2-8a9e-c058e60f6163, 5d419693-97cc-461b-b72a-a389ab7a001b, 56c78f52-cba5-415c-913a-fee0e1863a90, a109a040-c8f2-46dc-8c0b-373ae10d4fa0, dcaec327-1358-42a7-88de-931602a42a72, debc509f-9481-464b-af7f-5c3138a9cdb4, b0d167aa-cc98-440a-8e85-1ae3f089745a, d9e69c40-c83b-48af-b6b9-caafcb85f08b, 186ffdd2-3a8f-40cc-8362-13cc20bd2f46, 535e6030-ebe5-4c79-b5cd-69b161637a99, c5c0218a-800b-4235-8767-64d18208e68a, 4559d934-33b0-4872-a788-4ef27f554482, 94d3e20b-add7-491c-aedd-4eb094a8aebf, ab4e58bf-3b75-4bf6-b6b3-f703fe61e7af, 3773f5c5-e4c5-4e46-a839-6945af15ca13, 3abf03dd-8eab-4a8d-8432-aa85a30c0eda, 5ec5e8dc-7492-498b-9652-b3733e4c87f7, 1d89287b-4eff-47ec-a7bb-8cedaac1f33f</td></tr><tr><th>steps</th> <td>forecast-challenger01-model</td></tr></table>
 
 Since a shadow deployment returns multiple predictions for a single datum, its inference result will look a little different from those of an A/B test or a single-step pipelne. The next exercise will show you how to examine all the inferences from all the models.
 
@@ -546,7 +718,7 @@ inference_df = get_singleton_forecast(sample_count.loc[4:30], 'count')
 display(inference_df)
 
 results = pipeline.infer(inference_df)
-display(results)
+display(results.filter(regex='time|out.*?weekly_average'))
 ```
 
 <table border="1" class="dataframe">
@@ -569,10 +741,7 @@ display(results)
     <tr style="text-align: right;">
       <th></th>
       <th>time</th>
-      <th>out.forecast</th>
       <th>out.weekly_average</th>
-      <th>out_forecast-challenger01-model.forecast</th>
-      <th>out_forecast-challenger02-model.forecast</th>
       <th>out_forecast-challenger01-model.weekly_average</th>
       <th>out_forecast-challenger02-model.weekly_average</th>
     </tr>
@@ -580,11 +749,8 @@ display(results)
   <tbody>
     <tr>
       <th>0</th>
-      <td>2023-08-03 14:04:02.701</td>
-      <td>[1386, 1219, 1247, 1242, 1243, 1243, 1243]</td>
+      <td>2023-08-14 15:49:25.882</td>
       <td>[1260.4285714285713]</td>
-      <td>[1471, 1473, 1473, 1473, 1473, 1473, 1473]</td>
-      <td>[1235, 1235, 1235, 1235, 1235, 1235, 1235]</td>
       <td>[1472.7142857142858]</td>
       <td>[1235.0]</td>
     </tr>
@@ -596,7 +762,7 @@ display(results)
 You have seen two methods to validate models in production with test (challenger) models. 
 The end result of an experiment is a decision about which model becomes the new champion. Let's say that you have been running the shadow deployment that you created in the previous exercise,  and you have decided that you want to replace the model "champion" with the model "challenger". To do this, you will clear all the steps out of the pipeline, and add only "challenger" back in.
 
-```
+```python
 # retrieve a handle to the challenger model
 # see the A/B test section for the definition of get_model()
 challenger = get_model("challenger")
@@ -637,11 +803,11 @@ inference_df = get_singleton_forecast(sample_count.loc[4:30], 'count')
 display(inference_df)
 
 results = pipeline.infer(inference_df)
-display(results.filter(regex='time|out.*'))
+display(results.filter(regex='time|out.*?weekly_average'))
 
 # swap the model
 
-pipeline.replace_with_model_step(0, challenger_model_02)
+pipeline.replace_with_model_step(0, challenger02_model)
 pipeline.deploy()
 
 # gives time for the update to happen - usually milliseconds, sometimes longer.  This gives enough time for the database updates to happen
@@ -651,7 +817,7 @@ time.sleep(15)
 display(pipeline.steps())
 
 results = pipeline.infer(inference_df)
-display(results.filter(regex='time|out.*'))
+display(results.filter(regex='time|out.*?weekly_average'))
 
 ```
 
@@ -677,36 +843,32 @@ display(results.filter(regex='time|out.*'))
     <tr style="text-align: right;">
       <th></th>
       <th>time</th>
-      <th>out.forecast</th>
       <th>out.weekly_average</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>2023-08-03 14:10:47.378</td>
-      <td>[1386, 1219, 1247, 1242, 1243, 1243, 1243]</td>
+      <td>2023-08-14 15:52:23.301</td>
       <td>[1260.4285714285713]</td>
     </tr>
   </tbody>
 </table>
 
-    [{'ModelInference': {'models': [{'name': 'forecast-challenger02-model', 'version': '3e13030c-27cb-461b-9e5b-3a0671d8a53c', 'sha': '94473071d321c00670dda36c7e7f953f4ed5fd2f33c2188b3a96dace19ece71d'}]}}]
+    [{'ModelInference': {'models': [{'name': 'forecast-challenger02-model', 'version': 'fc12d991-9d79-499f-91cb-a7332cb91af6', 'sha': '94473071d321c00670dda36c7e7f953f4ed5fd2f33c2188b3a96dace19ece71d'}]}}]
 
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
       <th></th>
       <th>time</th>
-      <th>out.forecast</th>
       <th>out.weekly_average</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>2023-08-03 14:11:06.744</td>
-      <td>[1235, 1235, 1235, 1235, 1235, 1235, 1235]</td>
+      <td>2023-08-14 15:52:43.318</td>
       <td>[1235.0]</td>
     </tr>
   </tbody>
@@ -729,10 +891,4 @@ At this point, if you are not continuing on to the next notebook, undeploy your 
 ```python
 ## blank space to undeploy the pipelines
 pipeline.undeploy()
-```
-
-<table><tr><th>name</th> <td>forecast-workshop-pipeline</td></tr><tr><th>created</th> <td>2023-08-02 15:50:59.480547+00:00</td></tr><tr><th>last_updated</th> <td>2023-08-03 14:10:47.817607+00:00</td></tr><tr><th>deployed</th> <td>False</td></tr><tr><th>tags</th> <td></td></tr><tr><th>versions</th> <td>dc5605d2-bb6a-48d2-b83a-3d77b7e608af, a68819c0-7508-467e-9fc1-60cbf8aaf9e1, b908d302-ce87-4a52-8ef2-b595fac2c67e, 7b94201f-ef5b-4629-ae2f-acf894cb1fcf, dc8bf23f-b598-48c6-bb2d-c5098d264622, 3a8ebc46-6261-4977-8a60-038c99c255d7, 40ab9d3d-ee6c-4f0c-bf38-345385130285, 47792a90-bea8-432a-981f-232bf67288c8, 97b815f3-636b-4424-8be4-3d95bcf32b40, 0d2f2250-9a43-47ce-beef-32371986f798, 46c95b7f-a79e-41ee-8565-578f9c3c20e5, 1ff98a35-3468-4b70-84fc-fe71aed99a75, 73ff8fc2-ca4d-4ea1-887b-0d31190cfe36, f8188956-8b3e-4479-8b15-e8747fe915a6, 33e5cc2c-2bb2-4dc2-8a9e-c058e60f6163, 5d419693-97cc-461b-b72a-a389ab7a001b, 56c78f52-cba5-415c-913a-fee0e1863a90, a109a040-c8f2-46dc-8c0b-373ae10d4fa0, dcaec327-1358-42a7-88de-931602a42a72, debc509f-9481-464b-af7f-5c3138a9cdb4, b0d167aa-cc98-440a-8e85-1ae3f089745a, d9e69c40-c83b-48af-b6b9-caafcb85f08b, 186ffdd2-3a8f-40cc-8362-13cc20bd2f46, 535e6030-ebe5-4c79-b5cd-69b161637a99, c5c0218a-800b-4235-8767-64d18208e68a, 4559d934-33b0-4872-a788-4ef27f554482, 94d3e20b-add7-491c-aedd-4eb094a8aebf, ab4e58bf-3b75-4bf6-b6b3-f703fe61e7af, 3773f5c5-e4c5-4e46-a839-6945af15ca13, 3abf03dd-8eab-4a8d-8432-aa85a30c0eda, 5ec5e8dc-7492-498b-9652-b3733e4c87f7, 1d89287b-4eff-47ec-a7bb-8cedaac1f33f</td></tr><tr><th>steps</th> <td>forecast-control-model</td></tr></table>
-
-```python
-
 ```
