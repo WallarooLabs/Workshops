@@ -24,12 +24,13 @@ def get_workspace(name):
             workspace= ws
     return workspace
 
-def get_pipeline(name):
-    try:
-        pipeline = wl.pipelines_by_name(name)[0]
-    except EntityNotFoundError:
-        print(f"Pipeline not found:{name}")
-    return pipeline
+def get_pipeline(pipeline_name, workspace):
+    plist = workspace.pipelines()
+    pipeline = [p for p in plist if p.name() == pipeline_name]
+    if len(pipeline) <= 0:
+        raise KeyError(f"Pipeline {pipeline_name} not found in this workspace")
+        return None
+    return pipeline[0]
 
 # pull a single datum from a data frame 
 # and convert it to the format the model expects
@@ -46,16 +47,10 @@ print(workspace)
 
 # the pipeline is assumed to be deployed
 print(f"Pipeline: {pipeline_name}")
-pipeline = get_pipeline(pipeline_name)
+pipeline = get_pipeline(pipeline_name, workspace)
 print(pipeline)
 
 print(pipeline.status())
 
-# get sample inference data
-df_from_csv = pd.read_csv('./data/test_data.csv')
-
-singleton = get_singleton(df_from_csv, 0)
-print(singleton)
-
-single_result = pipeline.infer(singleton)
-print(single_result)
+inference_result = pipeline.infer_from_file('./data/test_data.df.json')
+print(inference_result)
