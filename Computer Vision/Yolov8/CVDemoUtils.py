@@ -24,7 +24,7 @@ import pandas as pd
 import tensorflow
 import pytz
 import pandas as pd
-#from keras.utils import normalize
+
 from tensorflow.keras.utils import normalize
 import argparse
 
