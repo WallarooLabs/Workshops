@@ -203,8 +203,7 @@ pipeline.replace_with_random_split(0,[(2, control), (1, challenger)]))
 
 In either case, the random split will randomly send inference data to one model based on the weighted ratio.  As more inferences are performed, the ratio between the champion and challengers will align more and more to the ratio specified.
 
-Reference:  [Wallaroo SDK Essentials Guide: Pipeline Management A/B Testing
-](https://docs.wallaroo.ai/wallaroo-developer-guides/wallaroo-sdk-guides/wallaroo-sdk-essentials-guide/wallaroo-sdk-essentials-pipeline/#ab-testing).
+Reference:  [Wallaroo SDK Essentials Guide: Pipeline Management A/B Testing](https://docs.wallaroo.ai/wallaroo-developer-guides/wallaroo-sdk-guides/wallaroo-sdk-essentials-guide/wallaroo-sdk-essentials-pipeline/#ab-testing).
 
 Then creating an A/B test deployment would look something like this:
 
