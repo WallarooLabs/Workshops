@@ -42,12 +42,13 @@ def _forecast(dataframe):
     cnt_forecast = model.forecast(steps=nforecast, 
                                   exog=exoga)
 
-    cnt_forecast = cnt_forecast.round().astype(int)
+    forecast_average = cnt_forecast.mean()
+
     return pd.DataFrame({
         'dteday': exog['dteday'],
         'site_id': exog['site_id'],
-        'forecast': cnt_forecast
-
+        'forecast': cnt_forecast,
+        'forecast_average' : forecast_average
     })
 
 

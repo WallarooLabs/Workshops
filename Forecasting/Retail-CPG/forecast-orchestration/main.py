@@ -1,7 +1,6 @@
 import wallaroo
 from wallaroo.object import EntityNotFoundError
 
-
 wl = wallaroo.Client()
 
 # get the arguments
