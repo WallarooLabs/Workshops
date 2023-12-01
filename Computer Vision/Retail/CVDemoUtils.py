@@ -15,24 +15,19 @@ import time
 import requests
 import imutils
 from base64 import b64encode
-from IPython.display import display, HTML
+from IPython.display import display, HTML 
 from datetime import datetime
-import pandas as pd
-
 import pytz
-
 import wallaroo
-import pandas as pd
-import base64
 
-from keras.utils.np_utils import normalize
+#from google.protobuf.json_format import MessageToDict
 
 
 #
-# Wallaroo CV Demo class provides some helper functions for rendering inferences results onto images
+# Wallaroo CV Demo class provides some helper functions for rendering inferences results onto images 
 # Author: Will Berger
 class CVDemo():
-    newYorkTz = pytz.timezone("America/New_York")
+    newYorkTz = pytz.timezone("America/New_York") 
     format = "%m-%d-%Y %H:%M:%S.%f"
     
     
@@ -73,20 +68,7 @@ class CVDemo():
         # Unique colors for each identified COCO class
         self.COLORS = None
 
-    def setCurrentWorkspace(self, wl, ws_name):
-        found = False
-        ws = wl.list_workspaces()
-        for w in ws:
-            if w.name() == ws_name:
-                wl.set_current_workspace(w)
-                found = True
-                break
-        if not found:
-            workspace = wl.create_workspace(ws_name)
-            wl.set_current_workspace(workspace)
-
-        
-    def getCocoClasses(self):
+    def getCocoClasses(self): 
         if self.CLASSES == None:
             self.CLASSES = pickle.loads(open(self.COCO_CLASSES_PATH, "rb").read())
             self.COLORS = np.random.uniform(0, 1, size=(len(self.CLASSES), 3))
@@ -107,9 +89,9 @@ class CVDemo():
 
         localTime = localTime.strftime(CVDemo.format)
         print(localTime + " " + str(value))
-
+            
     def playVideo(self,path, width, height):
-        mp4 = open(path,'rb').read()
+        mp4 = open(path,'rb').read()   
         data_url = "data:video/mp4;base64," + b64encode(mp4).decode()
         
         htmlStr = "<video width="+str(width)+ " height=" + str(height) +" control><source src=\"" + data_url + "\" type=\"video/mp4\"> </video>"
@@ -117,18 +99,14 @@ class CVDemo():
         display(htmlStr)
      
     # displays the image with a title in jupyter notebook
-    def display(self, title, image):
-        return pltImshow(self,title,image)
-    
     def pltImshow(self, title, image):
         # convert the image frame BGR to RGB color space and display it
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        plt.figure(figsize=(12,8))
+        plt.figure(figsize=(16,12))
         plt.title(title)
         plt.grid(False)
         plt.imshow(image)
         plt.show()
-        
     
     # attempts to load a pipeline
     def loadPipeline(self, name,wl):
@@ -154,7 +132,7 @@ class CVDemo():
         #image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
         self.debug("Resizing to w:"+str(width) + " height:"+str(height))
-        image = cv2.resize(image, (width, height))
+        image = cv2.resize(image, (width, height)) 
         resizedImage = image.copy()
 
         # convert the image from BGR to RGB channel ordering and change the
@@ -170,46 +148,6 @@ class CVDemo():
         return tensor, resizedImage
     
    
-    # load the image from disk, convert to BGR, resize to specified width, height, convert the image back to RGB
-    # convert the image to a float tensor and returns it.  Also return the original resized image for drawing bounding boxes in BGR
-    def loadImageAndResizeTiff(self, imagePath, width, height):
-        return self.imageResizeTiff(Image.open(imagePath), width, height)
-        
-    
-    # load the image from disk, convert to BGR, resize to specified width, height, convert the image back to RGB
-    # convert the image to a float tensor and returns it.  Also return the original resized image for drawing bounding boxes in BGR
-    def imageResizeTiff(self, image, width, height):
-        
-
-        #self.print("Image Mode:"+image.mode)
-        im_pillow = np.array(image)
-        image = cv2.cvtColor(im_pillow, cv2.COLOR_RGB2BGR)
-        #image = cv2.imread('images/example_09-v2.jpg')
-        #image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-        self.debug("Resizing to w:"+str(width) + " height:"+str(height))
-        image = cv2.resize(image, (width, height))
-        resizedImage = image.copy()
-
-        # convert the image from BGR to RGB channel ordering and change the
-        # image from channels last to channels first ordering
-        #image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        
-#        image = image.transpose((2, 0, 1))
-
-        # add the batch dimension, scale the raw pixel intensities to the
-        # range [0, 1], and convert the image to a floating point tensor
-        image = np.expand_dims(image, axis=0)
-        image = np.expand_dims(image, axis=0)
-
-        image = image.transpose((1, 2, 3, 0))
-        image = image / 255.0
-        tensor = torch.FloatTensor(image)
-        print("tensor shape")
-        print(tensor.shape)
-        return tensor, resizedImage
-
     # converts the pytorch model to onnx by loading the given pytorch model using the sampleImage as the input
     # converting to onnx and saving the onnx model with the name pytorchModelPath + ".onnx"
     def loadPytorchAndConvertToOnnx(self, pytorchModelPath, sampleImagePath, width, height):
@@ -220,7 +158,7 @@ class CVDemo():
 
         tensor, resizedImage = self.loadImageAndResize(sampleImagePath, width, height)
         input_names = ["data"]
-        output_names = ["boxes", "classes","confidences"]
+        output_names = ["output"]
         torch.onnx.export(model,
                           tensor,
                           pytorchModelPath+'.onnx',
@@ -316,7 +254,7 @@ class CVDemo():
         tensor, resizedImage = self.loadImageAndResize(imagePath,width,height)
 
         npArray = tensor.cpu().numpy()
-        #self.saveInputToFile("onnx-input.json",npArray)
+        self.saveInputToFile("onnx-input.json",npArray)
 
         onnx_session= ort.InferenceSession(onnx_model_path)
         model = onnx.load(onnx_model_path)
@@ -372,23 +310,21 @@ class CVDemo():
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.COLORS[idx], 2)
         # show the output image
         self.pltImshow("Output", resizedImage)
-        return model
         
     # loads the image and resizes it to width, height, runs inference on model to detect objects, bounding boxes, and classes
     # draws the bounding boxes, coco classificaiton, and confidence on the orig image
     #def drawDetectedObjectsWithClassification(self, modelName, image, boxes, classes, confidences, confidenceLevel):
     def drawDetectedObjectsWithClassification(self, results):
-        confidences = results['confidences'].tolist()[0]
-        boxes = results['boxes'].tolist()[0]
+        confidences = results['confidences']
+        boxes = results['boxes']
         
         # Reshape box coord inferences to array with 4 elements (x,y,w,h)
-        if len(boxes) != len(confidences):
-            boxList = boxes
-            boxA = np.array(boxList)
-            boxes = boxA.reshape(-1, 4)
-            boxes = boxes.astype(int)
+        boxList = boxes
+        boxA = np.array(boxList)
+        boxes = boxA.reshape(-1, 4)
+        boxes = boxes.astype(int)
         
-        classes = results['classes'].tolist()[0]
+        classes = results['classes']
         image = results['image']
         modelName = results['model_name']
         infTime = "{:.2f}".format(results['inference-time'])
@@ -414,10 +350,7 @@ class CVDemo():
                 # for the object
                 box = boxes[i]
                 (startX, startY, endX, endY) = box
-                startX = int(startX)
-                startY = int(startY)
-                endX = int(endX)
-                endY = int(endY)
+                   
                 color = results['color']
                 self.debug("color="+str(color))
                  # draw the bounding box and label on the image
@@ -429,8 +362,7 @@ class CVDemo():
 
         return image
     
-    
-    # loads the image and resizes it to width, height, runs inference on model to detect objects, bounding boxes, and classes
+     # loads the image and resizes it to width, height, runs inference on model to detect objects, bounding boxes, and classes
     # draws the bounding boxes, coco classificaiton, and confidence on the orig image
     #def drawDetectedObjectsWithClassification(self, modelName, image, boxes, classes, confidences, confidenceLevel):
     def drawDetectedAnomaliesWithClassification(self, results):
@@ -497,9 +429,10 @@ class CVDemo():
         # show the output image
         self.pltImshow("Output", image)
             
-   
     
-    # converts the frame to json with key "tensor" with size with and height
+    
+    
+    # converts the frame to json with key "tensor" with size with and height         
     def convertFrameToJsonTensor(self, frame, width, height):
 
         # The image width and height needs to be set to what the model was trained for.  In this case 640x480.
@@ -536,7 +469,7 @@ class CVDemo():
         #    outfile.write(jsonInput)
         return jsonInput
     
-    # converts the frame to json with key "tensor" with size with and height
+    # converts the frame to json with key "tensor" with size with and height         
     def convertFrameToTensorDict(self, frame, width, height):
 
         # The image width and height needs to be set to what the model was trained for.  In this case 640x480.
@@ -564,25 +497,7 @@ class CVDemo():
         
         return dictData
     
-    def convertFrameToTensorDataframe(self, frame, width, height):
-        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        image = image.transpose((2, 0, 1))
-
-        # add the batch dimension, scale the raw pixel intensities to the
-        # range [0, 1], and convert the image to a floating point tensor
-        image = np.expand_dims(image, axis=0)
-        image = image / 255.0
-        tensor = torch.FloatTensor(image)
-
-        # get npArray from the tensorFloat
-        npArray = tensor.cpu().numpy()
-        self.debug("frame shape:"+str(npArray.shape))
-
-        #creates a dictionary with the wallaroo "tensor" key and the numpy ndim array representing image as the value.
-        df = pd.DataFrame({"tensor":[npArray]})
-        return df
-    
-    # converts the frame to json with key "tensor" with size with and height
+    # converts the frame to json with key "tensor" with size with and height         
     def convertFrameToTensor(self, frame):
 
         # The image width and height needs to be set to what the model was trained for.  In this case 640x480.
@@ -615,15 +530,15 @@ class CVDemo():
         infResult['boxes'] = jsonResult[0]['outputs'][0]['Float']['data']
         infResult['classes'] = jsonResult[0]['outputs'][1]['Int64']['data']
         infResult['confidences'] = jsonResult[0]['outputs'][2]['Float']['data']
-        infResult['onnx-time'] =  int(jsonResult[0]['elapsed']) / 1e+9
+        infResult['onnx-time'] =  int(jsonResult[0]['elapsed']) / 1e+9                
 
         self.debug("infResult")
         self.debug(infResult)
         return infResult
     #
+    # 
     #
-    #
-    def runInferenceOnFrameUsingApi(self, frame, pipelineEndPointUrl, width, height):
+    def runInferenceOnFrameUsingApi(self, frame, pipelineEndPointUrl, width, height):      
         jsonInput = self.convertFrameToJsonTensor(frame, width, height)
         # Run inference by calling the wallaroo url rest api endpoint feeding it the jsonInput
         jsonOutput = ""
@@ -645,7 +560,7 @@ class CVDemo():
                  self.print(jsonOutput)
                  return None
                 
-            outputs = jsonOutput[0]['outputs']
+            outputs = jsonOutput[0]['outputs'] 
             if outputs is None:
                 self.print("Could not extract inference results from jsonOutput")
                 self.print(jsonOutput)
@@ -665,7 +580,7 @@ class CVDemo():
             
             infResult = self.convertWallarooJsonToInferenceResultDict(jsonOutput)
 
-        except Exception as e:
+        except Exception as e: 
             self.print("An Exception occurred:")
             self.print(e)
             self.print("jsonOutput")
@@ -714,7 +629,7 @@ class CVDemo():
         
         return infResult
      
-    def extractAnomaliesFromInference(self,infResultDict, walInfResult):
+    def extractAnomaliesFromInference(self,infResultDict, walInfResult):  
         results = walInfResult[0].raw
         anomalyClasses = results['outputs'][0]['Json']['data'][0]['anomaly-classes']
         anomalyConfidences = results['outputs'][0]['Json']['data'][0]['anomaly-confidences']
@@ -741,7 +656,7 @@ class CVDemo():
         infResultDict['classes'] = data[1]
 
         infResultDict['confidences'] = data[2]
-        infResultDict['onnx-time'] =  int(walInfResult[0].time_elapsed().microseconds) / 1e+6 # convert to seconds
+        infResultDict['onnx-time'] =  int(walInfResult[0].time_elapsed().microseconds) / 1e+6 # convert to seconds               
 
         results = walInfResult[0].raw
         #shadow_results['original_data'] = None
@@ -756,49 +671,7 @@ class CVDemo():
                 shadowInfResult = results['shadow_data'][model_name]
                 
                 self.debug(shadowInfResult)
-                shadowInf = { 'boxes' : shadowInfResult[0]['Float']['data'],
-                              'classes' : shadowInfResult[1]['Int64']['data'],
-                              'confidences' : shadowInfResult[2]['Float']['data'] }
-                infResultDict['shadow_data'][model_name] = shadowInf
-
-
-        else:
-             self.debug('no shadow_data')
-           
-        #
-        #if ('= None  # We are removing the input image json.  Not needed
-
-        #self.debug(infResultDict)
-        return infResultDict
-    
-    def convertWallarooResultToInferenceResultDataframe(self,walInfResult):
-        self.debug("convertWallarooResultToInferenceResultDataframe ")
-        self.debug(walInfResult)
-        
-        infResultDict = {}
-        #infResultDict['model_name'] = walInfResult['model_name']
-      
-        #infResultDict['pipeline_name'] = walInfResult[0].model()
-
-        infResultDict['boxes'] = walInfResult['out.boxes']
-        
-        infResultDict['classes'] = walInfResult['out.classes']
-
-        infResultDict['confidences'] = walInfResult['out.confidences']
-        infResultDict['onnx-time'] =  1.0 #int(walInfResult[0].time_elapsed().microseconds) / 1e+6 # convert to seconds
-
-        #shadow_results['original_data'] = None
-        
-        if 'shadow_data' in walInfResult:
-            self.debug('Found shadow data')
-            shadowInf = {}
-            self.debug(results['shadow_data'])
-            infResultDict['shadow_data'] = {}
-            for model_name in results['shadow_data']:
-                shadowInfResult = results['shadow_data'][model_name]
-                
-                self.debug(shadowInfResult)
-                shadowInf = { 'boxes' : shadowInfResult[0]['Float']['data'],
+                shadowInf = { 'boxes' : shadowInfResult[0]['Float']['data'], 
                               'classes' : shadowInfResult[1]['Int64']['data'],
                               'confidences' : shadowInfResult[2]['Float']['data'] }
                 infResultDict['shadow_data'][model_name] = shadowInf
@@ -817,44 +690,24 @@ class CVDemo():
     #
     # Uses the wallaroo SDK to run inference.  Returns a dictionary with the inference result
     #
-    def runInferenceOnFrameUsingSdk(self, frame, config):
-        
-        if not 'arrow' in config:
-            dictTensor = self.convertFrameToTensorDict(frame, config['width'], config['height'])
-            # Run inference by calling the wallaroo url rest api endpoint feeding it the jsonInput
-            inferResult = None
-            #try:
-            self.debug("call runInferenceOnFrameUsingSdk ")
-            startTime = time.time()
-            #jsonData = json.dumps(dictTensor)
-            #with open("dictTensor.json", "w") as outfile:
-            #    outfile.write(jsonData)
-            walInferResult = config['pipeline'].infer(dictTensor)
-            inferResult = self.convertWallarooResultToInferenceResultDict(walInferResult)
-            if ('extract-anomalies' in config) and config['extract-anomalies'] == True:
-                self.extractAnomaliesFromInference(inferResult,walInferResult)
+    def runInferenceOnFrameUsingSdk(self, frame, config):    
+        dictTensor = self.convertFrameToTensorDict(frame, config['width'], config['height'])
+        # Run inference by calling the wallaroo url rest api endpoint feeding it the jsonInput
+        inferResult = None
+        #try:
+        self.debug("call runInferenceOnFrameUsingSdk ")
+        startTime = time.time()
+        #jsonData = json.dumps(dictTensor)
+        #with open("dictTensor.json", "w") as outfile:
+        #    outfile.write(jsonData) 
+        walInferResult = config['pipeline'].infer(dictTensor)  
+        inferResult = self.convertWallarooResultToInferenceResultDict(walInferResult)
+        if ('extract-anomalies' in config) and config['extract-anomalies'] == True:
+            self.extractAnomaliesFromInference(inferResult,walInferResult)
 
-            endTime = time.time()
-            inferResult['inference-time'] = (endTime - startTime)
-        else:
-            dfTensor = self.convertFrameToTensorDataframe(frame, config['width'], config['height'])
-            # Run inference by calling the wallaroo url rest api endpoint feeding it the jsonInput
-            inferResult = None
-            #try:
-            self.debug("call runInferenceOnFrameUsingSdk ")
-            startTime = time.time()
-            #jsonData = json.dumps(dictTensor)
-            #with open("dictTensor.json", "w") as outfile:
-            #    outfile.write(jsonData)
-            walInferResult = config['pipeline'].infer(dfTensor)
-            print("-- walInfResult --")
-            print(walInferResult)
-            inferResult = self.convertWallarooResultToInferenceResultDataframe(walInferResult)
-            if ('extract-anomalies' in config) and config['extract-anomalies'] == True:
-                self.extractAnomaliesFromInference(inferResult,walInferResult)
+        endTime = time.time()
+        inferResult['inference-time'] = (endTime - startTime)
 
-            endTime = time.time()
-            inferResult['inference-time'] = (endTime - startTime)
         return inferResult
             
     #
@@ -862,7 +715,7 @@ class CVDemo():
     # if config['inference'] = 'ONNX' it will use the ONNX runtime locally to run inference
     # if config['inference'] = 'WALLAROO_SDK' or 'WALLAROO_API' it will use the pipeline to run inference on Wallaroo
     #
-    def runInferenceOnFrame(self, frame, config):
+    def runInferenceOnFrame(self, frame, config):      
         
         dictTensor = self.convertFrameToTensorDict(frame, config['width'], config['height'])
         # Run inference by calling the wallaroo url rest api endpoint feeding it the jsonInput
@@ -873,7 +726,7 @@ class CVDemo():
         startTime = time.time()
         #jsonData = json.dumps(dictTensor)
         #with open("dictTensor.json", "w") as outfile:
-        #    outfile.write(jsonData)
+        #    outfile.write(jsonData) 
         if ('skip-frames-list' in config):
             for tplRange in config['skip-frames-list']:
                 if (config['frame-cnt'] >= tplRange[0] and
@@ -886,16 +739,16 @@ class CVDemo():
             infResult = self.inferUsingOnnx(frame,config)
         elif (config['inference'] == "WALLAROO_API"):
             #pipeline = config['pipeline']
-            #inferResult = pipeline.infer(dictTensor)
+            #inferResult = pipeline.infer(dictTensor)  
             #self.print(inferResult[0].data())
-            infResult = self.runInferenceOnFrameUsingApi(frame, config['endpoint-url'],  config['width'], config['height'])
+            infResult = self.runInferenceOnFrameUsingApi(frame, config['endpoint-url'],  config['width'], config['height'])        
         elif (config['inference'] == "WALLAROO_SDK"):
-             infResult = self.runInferenceOnFrameUsingSdk(frame, config)
+             infResult = self.runInferenceOnFrameUsingSdk(frame, config)        
         endTime = time.time()
 
         infResult['pipeline_name'] = config['pipeline_name']
         infResult['inference-time'] = (endTime - startTime)
-        #except Exception as e:
+        #except Exception as e: 
         #    self.print("Could not inference frame")
         #    print(e)
         #    infResult = None
@@ -916,7 +769,7 @@ class CVDemo():
         bestAvgConfidence = np.mean(npBestConf[confFilter])
 
         bestModel = jsonResult[0]['model_name']
-        for challenger in jsonResult[0]['shadow_data']:
+        for challenger in jsonResult[0]['shadow_data']:    
             #self.print("challenger"+str(jsonResult[0]['shadow_data'][challenger]))
             challengerConfidences = jsonResult[0]['shadow_data'][challenger][2]['Float']['data']
             
@@ -937,7 +790,7 @@ class CVDemo():
     def selectModelWithBestAverageConfidence(self,infResult, minConf):
         #print("infResult")
         #print(infResult)
-        bestConfidences = infResult['confidences']
+        bestConfidences = infResult['confidences'] 
         #self.print("bestConfidences"+str(bestConfidences))
         npBestConf = np.array(bestConfidences)
         confFilter = npBestConf > minConf
@@ -945,7 +798,7 @@ class CVDemo():
         self.debug("control avg conf:"+str(bestAvgConfidence))
 
         bestModel = infResult['model_name']
-        for challenger in infResult['shadow_data']:
+        for challenger in infResult['shadow_data']:    
             self.debug("challenger:"+str(challenger))
             self.debug("challenger:"+str(infResult['shadow_data'][challenger]['confidences']))
             #self.print("challenger"+str(jsonResult[0]['shadow_data'][challenger]))
@@ -962,7 +815,7 @@ class CVDemo():
             
         return bestModel
     
-    def buildConfigFromPipelineInfernece(self, jsonResult):
+    def buildConfigFromPipelineInfernece(self, jsonResult):    
         config = {}
         model_name = jsonResult[0]['model_name']
         pipeline_name = jsonResult[0]['pipeline_name']
@@ -993,7 +846,7 @@ class CVDemo():
         
         return config
     
-    def buildConfigFromInferenceResult(self, infResult):
+    def buildConfigFromInferenceResult(self, infResult):    
         config = {}
         model_name = infResult['model_name']
         pipeline_name = jinfResult['pipeline_name']
@@ -1024,7 +877,7 @@ class CVDemo():
         
         return config
     
-    def buildConfigsFromShadowDeplInferneces(self, infResult):
+    def buildConfigsFromShadowDeplInferneces(self, infResult):  
         self.debug("calling buildConfigsFromShadowDeplInferneces")
         config = {}
         configList = []
@@ -1093,9 +946,9 @@ class CVDemo():
         
         rows = len(msgList)
         # Calculate Center Positioning
-        (msgWidth, msgHeight), baseline = cv2.getTextSize(msgList[0], cv2.FONT_HERSHEY_PLAIN, fontScale, fontThickness)
+        (msgWidth, msgHeight), baseline = cv2.getTextSize(msgList[0], cv2.FONT_HERSHEY_PLAIN, fontScale, fontThickness)      
        
-        msgCenterX = int((frameWidth - msgWidth) / 2)
+        msgCenterX = int((frameWidth - msgWidth) / 2) 
         msgY = int( (frameHeight/2) - ((msgHeight * rows) / 2) )
         
         msgY += msgHeight
@@ -1105,8 +958,8 @@ class CVDemo():
         
         rowPadding = 8
         for msg in msgList:
-            (msgWidth, msgHeight), baseline = cv2.getTextSize(msg, cv2.FONT_HERSHEY_PLAIN, fontScale, fontThickness)
-            msgCenterX = int((frameWidth - msgWidth) / 2)
+            (msgWidth, msgHeight), baseline = cv2.getTextSize(msg, cv2.FONT_HERSHEY_PLAIN, fontScale, fontThickness)      
+            msgCenterX = int((frameWidth - msgWidth) / 2) 
 
             cv2.putText(dashboardFrame, msg, (msgCenterX, msgY), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)
             msgY += msgHeight + rowPadding
@@ -1131,10 +984,10 @@ class CVDemo():
         #titleSize = cv2.getTextSize(title, cv2.FONT_HERSHEY_PLAIN, 1, 2)[0]
         titleSize = cv2.getTextSize(title, cv2.FONT_HERSHEY_PLAIN, fontScale, fontThickness)[0]
 
-        titleCenterX = int((config['width'] - titleSize[0]) / 2)
+        titleCenterX = int((config['width'] - titleSize[0]) / 2)        
         
         y = statsHeight
-        cv2.putText(dashboardFrame, title, (titleCenterX, y), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)
+        cv2.putText(dashboardFrame, title, (titleCenterX, y), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)   
     
     def drawStatsDashboard(self, title, results):
         statsRowHeight = 25
@@ -1156,7 +1009,7 @@ class CVDemo():
     #
     def addColumnTitlesToToDashboard(self, columnList, dashboardImage):
         rowHeight = 20
-        y = 3 * rowHeight
+        y = 3 * rowHeight  
                     
         colTitlesRow = ""
         for colName in columnList:
@@ -1183,7 +1036,7 @@ class CVDemo():
             
             
     #
-    # Adds a message below the statistics table in the Message Board
+    # Adds a message below the statistics table in the Message Board 
     #
     def addNotesToDashboard(self, dashboardFrame, frameCnt, config):
         if ('note-list' in config):
@@ -1209,9 +1062,9 @@ class CVDemo():
             fontColor = CVDemo.WHITE
         
         msgWidth = cv2.getTextSize(note['note'], cv2.FONT_HERSHEY_PLAIN, fontScale, fontThickness)[0]
-        msgCenterX = int((width - msgWidth[0]) / 2)
+        msgCenterX = int((width - msgWidth[0]) / 2)        
         
-        cv2.putText(dashboardFrame, note['note'], (msgCenterX, y-10), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)
+        cv2.putText(dashboardFrame, note['note'], (msgCenterX, y-10), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)    
         
             
     #
@@ -1221,18 +1074,18 @@ class CVDemo():
     def addInferenceResultsToDashboard(self, results, columns, row, dashboardImage):
         avgScore = 0
         
-        confidences = results['confidences'].tolist()[0]
-        classes = results['classes'].tolist()[0]
+        confidences = results['confidences']
+        classes = results['classes']
         classCnt = len(classes)
         avgScore = 0.0
-        if (len(confidences) > 0):
+        if (len(confidences) > 0): 
             if 'confidence-target' in results:
                 target = results['confidence-target']
                 self.debug("target:"+str(target))
 
                 arrayConfidences = np.array(confidences)
                 arrayConfidences = arrayConfidences[arrayConfidences > target]
-                avgScore = np.mean(arrayConfidences)*100
+                avgScore = np.mean(arrayConfidences)*100            
             else:
                 avgScore = np.mean(confidences)*100
 
@@ -1241,12 +1094,12 @@ class CVDemo():
         pipelineName = results['pipeline_name']
         infTime = results['inference-time']
         onnxTime = results['onnx-time']
-        #onnxTime =  int(results['onnx-time']) / 1e+9
+        #onnxTime =  int(results['onnx-time']) / 1e+9 
             
         self.debug("infTime="+str(infTime))
         self.debug("onnxTime="+str(onnxTime))
         rowHeight=20
-        y = row * rowHeight + 5
+        y = row * rowHeight + 5  
             
         classCnt = len(set(classes))
     
@@ -1285,31 +1138,31 @@ class CVDemo():
 
         (colWidth, colHeight), baseline = cv2.getTextSize(columns[1], cv2.FONT_HERSHEY_PLAIN, fontScale, fontThickness)
         alignOffset = self.calcColumnXCoord(pipelineName, colWidth, CVDemo.ALIGN_CENTER, fontScale, fontThickness) # Model
-        xColPos = x + alignOffset
+        xColPos = x + alignOffset       
         # draw the cell text
         cv2.putText(dashboardImage, pipelineName, (xColPos, y), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)
         x += colWidth
     
-        value = "{:.2f}".format(infTime) + "/{:.2f}".format(float(onnxTime))
+        value = "{:.2f}".format(infTime) + "/{:.2f}".format(float(onnxTime))   
         (colWidth, colHeight), baseline = cv2.getTextSize(columns[2], cv2.FONT_HERSHEY_PLAIN, fontScale, fontThickness)
         alignOffset = self.calcColumnXCoord(value, colWidth, CVDemo.ALIGN_CENTER, fontScale, fontThickness) # Model
-        xColPos = x + alignOffset
+        xColPos = x + alignOffset       
         # draw the cell text
         cv2.putText(dashboardImage, value, (xColPos, y), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)
         x += colWidth
 
-        value = str(len(boxes))
+        value = str(len(boxes))   
         (colWidth, colHeight), baseline = cv2.getTextSize(columns[3], cv2.FONT_HERSHEY_PLAIN, fontScale, fontThickness)
         alignOffset = self.calcColumnXCoord(value, colWidth, CVDemo.ALIGN_CENTER, fontScale, fontThickness) # Model
-        xColPos = x + alignOffset
+        xColPos = x + alignOffset       
         # draw the cell text
         cv2.putText(dashboardImage, value, (xColPos, y), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)
         x += colWidth
  
-        value = str(classCnt)
+        value = str(classCnt)   
         (colWidth, colHeight), baseline = cv2.getTextSize(columns[4], cv2.FONT_HERSHEY_PLAIN, fontScale, fontThickness)
         alignOffset = self.calcColumnXCoord(value, colWidth, CVDemo.ALIGN_CENTER, fontScale, fontThickness) # Model
-        xColPos = x + alignOffset
+        xColPos = x + alignOffset       
         # draw the cell text
         cv2.putText(dashboardImage, value, (xColPos, y), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)
         x += colWidth
@@ -1317,7 +1170,7 @@ class CVDemo():
         value = "{:.2f}%".format(avgScore)
         (colWidth, colHeight), baseline = cv2.getTextSize(columns[5], cv2.FONT_HERSHEY_PLAIN, fontScale, fontThickness)
         alignOffset = self.calcColumnXCoord(value, colWidth, CVDemo.ALIGN_CENTER, fontScale, fontThickness) # Model
-        xColPos = x + alignOffset
+        xColPos = x + alignOffset       
         # draw the cell text
         cv2.putText(dashboardImage, value, (xColPos, y), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)
         x += colWidth
@@ -1330,10 +1183,10 @@ class CVDemo():
         
         (colWidth, colHeight), baseline = cv2.getTextSize(columns[6], cv2.FONT_HERSHEY_PLAIN, fontScale, fontThickness)
         alignOffset = self.calcColumnXCoord(value, colWidth, CVDemo.ALIGN_CENTER, fontScale, fontThickness) # Model
-        xColPos = x + alignOffset
+        xColPos = x + alignOffset       
                
         # draw the cell text - TODO Hack fix this
-        if 'anomalyConfidences' in results:
+        if 'anomalyConfidences' in results:   
             value = str(len(results['anomalyConfidences']))
             cv2.putText(dashboardImage, value, (xColPos, y), cv2.FONT_HERSHEY_PLAIN, fontScale, CVDemo.RED, fontThickness, lineType = cv2.LINE_AA)
         else:
@@ -1343,7 +1196,7 @@ class CVDemo():
         value = "-"
         (colWidth, colHeight), baseline = cv2.getTextSize(columns[7], cv2.FONT_HERSHEY_PLAIN, fontScale, fontThickness)
         alignOffset = self.calcColumnXCoord(value, colWidth, CVDemo.ALIGN_CENTER, fontScale, fontThickness) # Model
-        xColPos = x + alignOffset
+        xColPos = x + alignOffset       
         # draw the cell text
         cv2.putText(dashboardImage, value, (xColPos, y), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)
         x += colWidth
@@ -1351,10 +1204,10 @@ class CVDemo():
         value = "-"
         (colWidth, colHeight), baseline = cv2.getTextSize(columns[8], cv2.FONT_HERSHEY_PLAIN, fontScale, fontThickness)
         alignOffset = self.calcColumnXCoord(value, colWidth, CVDemo.ALIGN_CENTER, fontScale, fontThickness) # Model
-        xColPos = x + alignOffset
+        xColPos = x + alignOffset       
         # draw the cell text
         cv2.putText(dashboardImage, value, (xColPos, y), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)
-        x += colWidth
+        x += colWidth               
     
     def drawStats(self,title, image, config, row):
         # clear image
@@ -1365,7 +1218,7 @@ class CVDemo():
         classes = config['classes']
         classCnt = len(classes)
         avgScore = 0.0
-        if (len(confidences) > 0):
+        if (len(confidences) > 0): 
             if 'confidence-target' in config:
                 target = config['confidence-target']
                 arrayConfidences = np.array(confidences)
@@ -1381,7 +1234,7 @@ class CVDemo():
         onnxTime = config['onnx-time']
             
         rowHeight=20
-        y = row*rowHeight
+        y = row*rowHeight  
             
         # sample text and font
         #unicode_text = u"Hello World!"
@@ -1402,7 +1255,7 @@ class CVDemo():
         #textY = (img.shape[0] + textsize[1]) / 2
         rowHeight = 20
         row = y
-        cv2.putText(image, title, (titleX, row), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)
+        cv2.putText(image, title, (titleX, row), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)   
         row += rowHeight
         cv2.putText(image, msg, (5, row), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness, lineType = cv2.LINE_AA)
         
@@ -1419,12 +1272,12 @@ class CVDemo():
         
         bestModelIdx = -1
         idx = 2
-        for challenger in jsonResult[0]['shadow_data']:
+        for challenger in jsonResult[0]['shadow_data']:          
             challengerConfig = buildConfigFromShadowDeplInferneces(challenger,0)
             self.drawStats("Wallaroo Shadow Deployment Statistics Dashboard", image,challengerConfig,idx)
             idx += 1
             
-        return image
+        return image 
     
     def count_frames_manual(self,video):
         # initialize the total number of frames read
@@ -1449,8 +1302,7 @@ class CVDemo():
     # Draws inference results on a copy of the frame
     # Writes frame out to video in outVideoPath
     def detectAndClassifyObjectsInVideo(self, config):
-        running = True
-        newYorkTz = pytz.timezone("America/New_York")
+        newYorkTz = pytz.timezone("America/New_York") 
         localTime = datetime.now(newYorkTz)
         localTime = localTime.strftime("%I:%M:%S %p")
         self.print("Start Time:"+localTime)
@@ -1465,7 +1317,7 @@ class CVDemo():
         maxFrameCnt = 0
         maxSkipCnt = 0
         maxFrameCnt = 0
-        if 'max-frames' in config:
+        if 'max-frame' in config:
             maxFrameCnt = config['max-frames']
         maxSkipCnt = 0
         if 'skip-frames' in config:
@@ -1481,7 +1333,7 @@ class CVDemo():
         if config['inference'] == 'ONNX':
             onnx_session= ort.InferenceSession(config['onnx_model_path'])
             model = onnx.load(config['onnx_model_path'])
-            onnx.checker.check_model(model)
+            onnx.checker.check_model(model)      
             config['onnx-session'] = onnx_session
             
         cap = cv2.VideoCapture(inVideoPath)
@@ -1516,14 +1368,14 @@ class CVDemo():
         self.addTitleToDashboard( "Wallaroo Computer Vision Statistics Dashboard", config, dashboardFrame)
 
         columns = [
-            '    Model   ',
-            '   Pipeline   ',
+            '    Model   ', 
+            '   Pipeline   ', 
             '      Inf     ',
-            ' Obj ',
-            ' Cls',
-            '   Conf  ',
-            ' Anom',
-            ' Drift',
+            ' Obj ', 
+            ' Cls', 
+            '   Conf  ', 
+            ' Anom', 
+            ' Drift', 
             '  PSI ']
         self.addColumnTitlesToToDashboard(columns, dashboardFrame)
         
@@ -1554,7 +1406,7 @@ class CVDemo():
                     frameStats += ":"+str(frameCnt) +" Read: {:.4f}".format(endTime-startTime)
                    
                     # resize frame for width and height the objecet detector is expecting
-                    frame = cv2.resize(frame, (width, height))
+                    frame = cv2.resize(frame, (width, height)) 
 
                     # run inference on the frame using width and height object detector is expecting
                     try:
@@ -1567,10 +1419,10 @@ class CVDemo():
                         break
                         
                     if (infResult == None):
-                        self.print("Could not inference frame:"+str(frameCnt))
-                        self.print("Pressing on.  Try reading next frame")
+                        self.print("Could not inference frame:"+str(frameCnt))   
+                        self.print("Pressing on.  Try reading next frame")    
                         frameCnt += 1
-                        config['frame-cnt']=frameCnt
+                        config['frame-cnt']=frameCnt          
                         continue
                     
                     #infConfig = self.buildConfigFromPipelineInfernece(json)
@@ -1578,17 +1430,17 @@ class CVDemo():
                     infResult['model_name'] = config['model_name']
                     infResult['pipeline_name'] = config['pipeline_name']
 
-                    infResult['confidence-target'] = config['confidence-target']
+                    infResult['confidence-target'] = config['confidence-target'] 
                     infResult['color'] = config['color']
                     
                     frameStats += " Inf: {:.4f}".format(infResult['inference-time'])
                     
                     #This formula is elapsed wallaroo time
-                    #onnxTime =  int(infResult['onnx-time']) / 1e+6
+                    #onnxTime =  int(infResult['onnx-time']) / 1e+6                
                     frameStats += " Onnx: {:.4f}".format(infResult['onnx-time'])
                                         
                     # Drawing the inference results and stats
-                    startTime = time.time()
+                    startTime = time.time()                   
                     detObjFrame = self.drawDetectedObjectsWithClassification(infResult)
                     
                     self.addInferenceResultsToDashboard(infResult, columns, row+3, dashboardFrame)
@@ -1626,7 +1478,6 @@ class CVDemo():
                 config['frame-cnt']=frameCnt
 
         except KeyboardInterrupt:
-            running = False
             self.print("Exiting")
             
         cap.release()
@@ -1636,16 +1487,14 @@ class CVDemo():
         localTime = datetime.now(newYorkTz)
         localTime = localTime.strftime("%H:%M:%S")
         self.print("End Time:"+localTime)
-        return running
-    
+
     # Reads through each frame in the inVideo,
     # Resizes te frame for the mdoel
     # Runs inference
     # Draws inference results on a copy of the frame
     # Writes frame out to video in outVideoPath
     def detectAndClassifyObjectsInVideoUsingShadowDeployment(self, config):
-        running = True
-        newYorkTz = pytz.timezone("America/New_York")
+        newYorkTz = pytz.timezone("America/New_York") 
         localTime = datetime.now(newYorkTz)
         localTime = localTime.strftime("%I:%M:%S %p")
         self.print("Start Time:"+localTime)
@@ -1666,7 +1515,7 @@ class CVDemo():
         if 'max-frame' in config:
             maxFrameCnt = config['max-frames']
         if 'skip-frames' in config:
-            maxSkipCnt = config['skip-frames']
+            maxSkipCnt = config['skip-frames']        
         
         if (maxSkipCnt > 0):
             self.print("Skipping [" + str(maxSkipCnt) +"] frames")
@@ -1712,14 +1561,14 @@ class CVDemo():
         skipCnt = 0
         self.addTitleToDashboard( "Wallaroo Computer Vision Statistics Dashboard", config, dashboardFrame)
         columns = [
-            '    Model   ',
-            '   Pipeline   ',
+            '    Model   ', 
+            '   Pipeline   ', 
             '      Inf     ',
-            ' Obj ',
-            ' Cls',
-            '   Conf  ',
-            ' Anom',
-            ' Drift',
+            ' Obj ', 
+            ' Cls', 
+            '   Conf  ', 
+            ' Anom', 
+            ' Drift', 
             '  PSI ']
 
         self.addColumnTitlesToToDashboard(columns, dashboardFrame)
@@ -1729,7 +1578,7 @@ class CVDemo():
         skipCnt = 0
         config['frame-cnt'] = frameCnt
         try:
-            while cap.isOpened():
+            while cap.isOpened(): 
                 totalStartTime = startTime = time.time()
                 ret, frame = cap.read()
                 endTime = time.time()
@@ -1756,10 +1605,10 @@ class CVDemo():
                         break
                         
                     if (infResult == None):
-                        self.print("Could not inference frame:"+str(frameCnt))
-                        self.print("Pressing on.  Try reading next frame")
+                        self.print("Could not inference frame:"+str(frameCnt))   
+                        self.print("Pressing on.  Try reading next frame")    
                         frameCnt += 1
-                        config['frame-cnt']=frameCnt
+                        config['frame-cnt']=frameCnt          
                         continue
                         
                     #bestModel = self.selectModelWithBestAverageConfidence(json, config['confidence-target'])
@@ -1785,16 +1634,16 @@ class CVDemo():
                         infConfig['color'] = modelColors[cnt]
                         
                         
-                        # Drawing the inference results and stats
+                        # Drawing the inference results and stats                      
                         detObjFrame = self.drawDetectedObjectsWithClassification(infConfig)
 
                         #self.drawStats("Wallaroo Image Statistics Dashboard", statsFrame, infConfig, cnt+1)
-                        self.addInferenceResultsToDashboard(infConfig, columns, cnt+4, dashboardFrame)
+                        self.addInferenceResultsToDashboard(infConfig, columns, cnt+4, dashboardFrame)                                     
                     self.addNotesToDashboard(dashboardFrame, frameCnt, config)
 
                     frame = cv2.vconcat([dashboardFrame, detObjFrame])
                     if (frameCnt > config['record-start-frame']):
-                        output.write(frame)
+                        output.write(frame)   
                     endTime = time.time()
                     frameStats += " Draw: {:.4f}".format(endTime - startTime)
                     frameStats += " Total: {:.4f}".format(endTime - totalStartTime)
@@ -1812,16 +1661,14 @@ class CVDemo():
                 config['frame-cnt']=frameCnt
 
         except KeyboardInterrupt:
-            running = False;
-            self.print("Exiting:" + str(running))
+            self.print("Exiting")
             
         cap.release()
         output.release()
         self.print("Finished writing video:"+outVideoPath)
         localTime = datetime.now(newYorkTz)
         localTime = localTime.strftime("%H:%M:%S")
-        self.print("End Time:"+localTime)
-        return running
+        self.print("End Time:"+localTime) 
         
     # Reads through each frame in the inVideo,
     # Resizes te frame for the mdoel
@@ -1829,7 +1676,7 @@ class CVDemo():
     # Draws inference results on a copy of the frame
     # Writes frame out to video in outVideoPath
     def useBestObjectDetectorInVideoUsingShadowDeployment(self, config):
-        newYorkTz = pytz.timezone("America/New_York")
+        newYorkTz = pytz.timezone("America/New_York") 
         localTime = datetime.now(newYorkTz)
         localTime = localTime.strftime("%I:%M:%S %p")
         self.print("Start Time:"+localTime)
@@ -1850,7 +1697,7 @@ class CVDemo():
         if 'max-frames' in config:
             maxFrameCnt = config['max-frames']
         if 'skip-frames' in config:
-            maxSkipCnt = config['skip-frames']
+            maxSkipCnt = config['skip-frames']        
         
         if (maxSkipCnt > 0):
             self.print("Skipping [" + str(maxSkipCnt) +"] frames")
@@ -1898,20 +1745,20 @@ class CVDemo():
         skipCnt = 0
         self.addTitleToDashboard( "Wallaroo Computer Vision Statistics Dashboard", config, dashboardFrame)
         columns = [
-            '    Model   ',
-            '   Pipeline   ',
+            '    Model   ', 
+            '   Pipeline   ', 
             '      Inf     ',
-            ' Obj ',
-            ' Cls',
-            '   Conf  ',
-            ' Wins',
-            ' Drift',
+            ' Obj ', 
+            ' Cls', 
+            '   Conf  ', 
+            ' Wins', 
+            ' Drift', 
             '  PSI ']
 
         self.addColumnTitlesToToDashboard(columns, dashboardFrame)
         wins = [0] * (len(challengerModelList) + 1) # for control
         try:
-            while cap.isOpened():
+            while cap.isOpened(): 
                 totalStartTime = startTime = time.time()
                 ret, frame = cap.read()
                 endTime = time.time()
@@ -1938,14 +1785,14 @@ class CVDemo():
                         break
                         
                     if (infResult == None):
-                        self.print("Could not inference frame:"+str(frameCnt))
-                        self.print("Pressing on.  Try reading next frame")
+                        self.print("Could not inference frame:"+str(frameCnt))   
+                        self.print("Pressing on.  Try reading next frame")    
                         frameCnt += 1
-                        config['frame-cnt']=frameCnt
+                        config['frame-cnt']=frameCnt          
                         continue
                     
                     if (infResult == None):
-                        self.debug("Could not inference frame:"+str(frameCnt))
+                        self.debug("Could not inference frame:"+str(frameCnt))    
                         frameCnt += 1
                         config['frame-cnt']=frameCnt
                         break
@@ -1973,7 +1820,7 @@ class CVDemo():
                         infConfig['color'] = modelColors[cnt]
                         # Drawing the inference results and stats
                        
-                        if (infConfig['model_name'] == bestModel):
+                        if (infConfig['model_name'] == bestModel): 
                             wins[cnt] += 1
                             detObjFrame = self.drawDetectedObjectsWithClassification(infConfig)
                         #else:
@@ -1985,7 +1832,7 @@ class CVDemo():
                     self.addNotesToDashboard(dashboardFrame, frameCnt, config)
                     frame = cv2.vconcat([dashboardFrame, detObjFrame])
                     if (frameCnt > config['record-start-frame']):
-                        output.write(frame)
+                        output.write(frame)   
                     endTime = time.time()
                     frameStats += " Draw: {:.4f}".format(endTime - startTime)
                     frameStats += " Total: {:.4f}".format(endTime - totalStartTime)
@@ -2018,7 +1865,7 @@ class CVDemo():
     # Draws inference results on a copy of the frame
     # Writes frame out to video in outVideoPath
     def simulateDriftWhileDetectingAndClassifyingObjectsInVideoUsingPipeline(self, config):
-        newYorkTz = pytz.timezone("America/New_York")
+        newYorkTz = pytz.timezone("America/New_York") 
         localTime = datetime.now(newYorkTz)
         localTime = localTime.strftime("%I:%M:%S %p")
         self.print("Start Time:"+localTime)
@@ -2088,7 +1935,7 @@ class CVDemo():
                 ret, frame = cap.read()
                 endTime = time.time()
                 frameCnt += 1
-                frame = cv2.resize(frame, (width, height))
+                frame = cv2.resize(frame, (width, height)) 
                 
                 skipCnt += 1
                 if (skipCnt < maxSkipCnt):
@@ -2098,7 +1945,7 @@ class CVDemo():
                     frameStats += ":"+str(frameCnt) +" Read: {:.4f}".format(endTime-startTime)
                    
                     # resize frame for width and height the objecet detector is expecting
-                    frame = cv2.resize(frame, (width, height))
+                    frame = cv2.resize(frame, (width, height)) 
 
                     if (blurFrameStart > 0 and blurFrameStart < frameCnt):
                         self.debug("bluring frame:" + str(frameCnt))
@@ -2112,14 +1959,14 @@ class CVDemo():
                     #self.saveDataToJsonFile("json-result-2.json",json)
                         
                     if (json == None):
-                        self.print("Could not inference frame:"+str(frameCnt))
+                        self.print("Could not inference frame:"+str(frameCnt))    
                         frameCnt += 1
                         break
                     
                     infConfig = self.buildConfigFromPipelineInfernece(json)
                     infConfig['image'] = frame
                     infConfig['inference-time'] = json[0]['inference-time']
-                    infConfig['confidence-target'] = config['confidence-target']
+                    infConfig['confidence-target'] = config['confidence-target'] 
                     infConfig['color'] = config['color']
                     
                     frameStats += " Inf: {:.4f}".format(infConfig['inference-time'])
@@ -2129,7 +1976,7 @@ class CVDemo():
                     
                     
                     # Drawing the inference results and stats
-                    startTime = time.time()
+                    startTime = time.time()                   
                     image = self.drawDetectedObjectsWithClassification(infConfig)
                     
                     self.drawStats("Wallaroo Image Statistics Dashboard", statsFrame,infConfig,1)
@@ -2171,7 +2018,7 @@ class CVDemo():
     # Draws inference results on a copy of the frame
     # Writes frame out to video in outVideoPath
     def recordVideo(self, config):
-        newYorkTz = pytz.timezone("America/New_York")
+        newYorkTz = pytz.timezone("America/New_York") 
         localTime = datetime.now(newYorkTz)
         localTime = localTime.strftime("%I:%M:%S %p")
         self.print("Start Time:"+localTime)
@@ -2185,7 +2032,7 @@ class CVDemo():
         maxSkipCnt = 0
        
         if 'skip-frames' in config:
-            maxSkipCnt = config['skip-frames']
+            maxSkipCnt = config['skip-frames']        
         
         cap = cv2.VideoCapture(inVideoPath)
 
@@ -2217,13 +2064,13 @@ class CVDemo():
         frameSize = ( width, height + dashboardHeight)
         self.print("   frame size:"+str(frameSize))
 
-        # initialize the video writer with the frame size that accounts for the dashboard.
+        # initialize the video writer with the frame size that accounts for the dashboard.                 
         output = cv2.VideoWriter(outVideoPath, cv2.VideoWriter_fourcc(*'mp4v'), fps, frameSize)
 
         frameCnt = 1
-        skipCnt = 0
+        skipCnt = 0       
         try:
-            while cap.isOpened():
+            while cap.isOpened(): 
                 totalStartTime = startTime = time.time()
                 ret, frame = cap.read()
                 endTime = time.time()
@@ -2241,14 +2088,14 @@ class CVDemo():
                     
                     if (frameCnt > config['dashboard-start-frame'] and \
                         frameCnt < config['dashboard-end-frame']):
-                        self.addMessageToDashboard(config ,dashboardFrame)
+                        self.addMessageToDashboard(config ,dashboardFrame)                       
                     else:
                         dashboardFrame.fill(0)
 
                     # concatenate video frame and statistics dashboard
                     frame = cv2.vconcat([dashboardFrame, frame])
                     if (frameCnt > config['record-start-frame']):
-                        output.write(frame)
+                        output.write(frame)                 
                     
                     self.print(frameStats)
                     frameStats = "Frame"
@@ -2292,12 +2139,12 @@ class CVDemo():
             for video in videoList:
                 cap = cv2.VideoCapture(video)
                 frameCnt = 0
-                while cap.isOpened():
+                while cap.isOpened(): 
                     self.print("video "+str(video) + " frame cnt:"+str(frameCnt))
                     ret, frame = cap.read()
                     if (ret == True):
                         self.print("   frameSize="+str(frame.shape))
-                        output.write(frame)
+                        output.write(frame)        
                     else:
                         self.print("failed to read frame video "+str(video) + " frame cnt:"+str(frameCnt))
                         cap.release()
@@ -2317,7 +2164,7 @@ class CVDemo():
     # Draws inference results on a copy of the frame
     # Writes frame out to video in outVideoPath
     def detectAndClassifyAnomaliesInVideo(self, config):
-        newYorkTz = pytz.timezone("America/New_York")
+        newYorkTz = pytz.timezone("America/New_York") 
         localTime = datetime.now(newYorkTz)
         localTime = localTime.strftime("%I:%M:%S %p")
         self.print("Start Time:"+localTime)
@@ -2353,7 +2200,7 @@ class CVDemo():
         if config['inference'] == 'ONNX':
             onnx_session= ort.InferenceSession(config['onnx_model_path'])
             model = onnx.load(config['onnx_model_path'])
-            onnx.checker.check_model(model)
+            onnx.checker.check_model(model)      
             config['onnx-session'] = onnx_session
             
         cap = cv2.VideoCapture(inVideoPath)
@@ -2381,20 +2228,20 @@ class CVDemo():
         dashboardHeight = rowHeight * rows
         dashboardFrame = np.zeros([dashboardHeight, width, 3],dtype=np.uint8)
         frameSize = ( width, height + dashboardHeight)
-        self.print("   frame size:"+str(frameSize))
+        self.print("   frame size:"+str(frameSize))        
         output = cv2.VideoWriter(outVideoPath, cv2.VideoWriter_fourcc(*'mp4v'), fps, frameSize)
         
         self.addTitleToDashboard( "Wallaroo Computer Vision Statistics Dashboard", config, dashboardFrame)
 
         columns = [
-            '    Model   ',
-            '   Pipeline   ',
+            '    Model   ', 
+            '   Pipeline   ', 
             '      Inf     ',
-            ' Obj ',
-            ' Cls',
-            '   Conf  ',
-            ' Anom',
-            ' Drift',
+            ' Obj ', 
+            ' Cls', 
+            '   Conf  ', 
+            ' Anom', 
+            ' Drift', 
             '  PSI ']
         self.addColumnTitlesToToDashboard(columns, dashboardFrame)
         
@@ -2424,13 +2271,13 @@ class CVDemo():
                     frameStats += ":"+str(frameCnt) +" Read: {:.4f}".format(endTime-startTime)
                    
                     # resize frame for width and height the objecet detector is expecting
-                    frame = cv2.resize(frame, (width, height))
+                    frame = cv2.resize(frame, (width, height)) 
 
                     # run inference on the frame using width and height object detector is expecting
                     infResult = self.runInferenceOnFrame(frame, config)
                               
                     if (infResult == None):
-                        self.print("Could not inference frame:"+str(frameCnt))
+                        self.print("Could not inference frame:"+str(frameCnt))    
                         frameCnt += 1
                         break
                     
@@ -2439,13 +2286,13 @@ class CVDemo():
                     infResult['model_name'] = config['model_name']
                     infResult['pipeline_name'] = config['pipeline_name']
 
-                    infResult['confidence-target'] = config['confidence-target']
+                    infResult['confidence-target'] = config['confidence-target'] 
                     infResult['color'] = config['color']
                     
                     frameStats += " Inf: {:.4f}".format(infResult['inference-time'])
                     
                     #This formula is elapsed wallaroo time
-                    #onnxTime =  int(infResult['onnx-time']) / 1e+9
+                    #onnxTime =  int(infResult['onnx-time']) / 1e+9                
                     frameStats += " Onnx: {:.4f}".format(infResult['onnx-time'])
                                         
                     # Drawing the inference results and stats
@@ -2499,543 +2346,3 @@ class CVDemo():
         localTime = datetime.now(newYorkTz)
         localTime = localTime.strftime("%H:%M:%S")
         self.print("End Time:"+localTime)
-
-    def extractInferenceResultsIntoDataFrame(self, results, key="outputs"):
-        df = pd.DataFrame(columns=['classification','confidence','x1','y1','x2','y2'])
-        pd.options.mode.chained_assignment = None  # default='warn'
-        pd.options.display.float_format = '{:.2%}'.format
-
-        if isinstance(results, pd.DataFrame):
-            boxList = results['out.boxes'].tolist()
-            classes = results['out.classes'].tolist()[0]
-            confidences = results['out.confidences'].tolist()[0]
-        else:          
-            # Points to where all the inference results are
-            outputs = results[key]
-            boxes = outputs[0]
-
-            boxList = boxes['Float']['data']
-            classes = outputs[1]['Int64']['data']
-            confidences = outputs[2]['Float']['data']
-            
-        # reshape this to an array of bounding box coordinates converted to ints
-        boxA = np.array(boxList)
-        boxes = boxA.reshape(-1, 4)
-        boxes = boxes.astype(int)
-
-        df[['x1', 'y1','x2','y2']] = pd.DataFrame(boxes)
-
-        idx = 0 
-        for idx in range(0,len(classes)):
-            df['classification'][idx] = self.getCocoClasses()[classes[idx]] # Classes contains the 80 different COCO classificaitons
-            df['confidence'][idx] = confidences[idx]
-        return df
-    
-    def extractShadowInferenceResultsIntoDataFrame(self, results, challenger):
-        df = pd.DataFrame(columns=['classification','confidence','x1','y1','x2','y2'])
-        pd.options.mode.chained_assignment = None  # default='warn'
-        pd.options.display.float_format = '{:.2%}'.format
-
-        # Points to where all the inference results are
-        outputs = results['shadow_data']
-        boxes = outputs[challenger][0]
-
-        # reshape this to an array of bounding box coordinates converted to ints
-        boxList = boxes['Float']['data']
-        boxA = np.array(boxList)
-        boxes = boxA.reshape(-1, 4)
-        boxes = boxes.astype(int)
-
-        df[['x1', 'y1','x2','y2']] = pd.DataFrame(boxes)
-
-        classes = outputs[challenger][1]['Int64']['data']
-        confidences = outputs[challenger][2]['Float']['data']
-
-        idx = 0 
-        for idx in range(0,len(classes)):
-            df['classification'][idx] = self.getCocoClasses()[classes[idx]] # Classes contains the 80 different COCO classificaitons
-            df['confidence'][idx] = confidences[idx]
-        return df
-    
-    def extractAnomalyInferenceResultsIntoDataFrame(self, anomolyClasses, anomolyConfidences, anomolyBoxes):
-        anomolyDf = pd.DataFrame(columns=['classification','confidence','x1','y1','x2','y2'])
-        pd.options.mode.chained_assignment = None  # default='warn'
-        pd.options.display.float_format = '{:.2%}'.format
-
-        anomolyDf[['x1', 'y1','x2','y2']] = pd.DataFrame(anomolyBoxes)
-
-        #classes = outputs[1]['Int64']['data']
-        #confidences = outputs[2]['Float']['data']
-
-        idx = 0 
-        cocoClasses = self.getCocoClasses()
-        for idx in range(0,len(anomolyClasses)):
-            anomolyDf['classification'][idx] = cocoClasses[anomolyClasses[idx]] # Classes contains the 80 different COCO classificaitons
-            anomolyDf['confidence'][idx] = anomolyConfidences[idx]
-        return anomolyDf
-                                            
-    # loads the image, resizes in to width, height, converts the result to an tensor.
-    # Returns the ndim numpy array and the resized image
-    def loadImageAndConvertToDataframe(self,imagePath, width, height):
-        # The image width and height needs to be set to what the model was trained for.  In this case 640x480.
-        tensor, resizedImage = self.loadImageAndResize(imagePath, width, height)
-
-        # get npArray from the tensorFloat
-        npArray = tensor.cpu().numpy()
-
-        #creates a dictionary with the wallaroo "tensor" key and the numpy ndim array representing image as the value.
-        df = pd.DataFrame({"tensor":[npArray]})
-        return df, resizedImage
-
-    # loads the image, resizes in to width, height, converts the result to an tensor.
-    # Returns the ndim numpy array and the resized image
-    def loadImageAndConvert(self,imagePath, width, height):
-        # The image width and height needs to be set to what the model was trained for.  In this case 640x480.
-        tensor, resizedImage = self.loadImageAndResize(imagePath, width, height)
-
-        # get npArray from the tensorFloat
-        npArray = tensor.cpu().numpy()
-
-        #creates a dictionary with the wallaroo "tensor" key and the numpy ndim array representing image as the value.
-        return {"tensor": npArray.tolist()}, resizedImage
-    
-    # loads the image, resizes in to width, height, converts the result to an tensor.
-    # Returns the ndim numpy array and the resized image
-    def loadImageAndConvertTiff(self,imagePath, width, height):
-        img = cv2.imread(imagePath, 0)
-        imgNorm = np.expand_dims(normalize(np.array(img), axis=1),2)
-        imgNorm=imgNorm[:,:,0][:,:,None]
-        imgNorm=np.expand_dims(imgNorm, 0)
-        
-        resizedImage = None
-        #creates a dictionary with the wallaroo "tensor" key and the numpy ndim array representing image as the value.
-        return {"tensor": imgNorm.tolist()}, resizedImage
-
-    def drawDetectedObjectsFromInference(self, results):
-    
-        image = self.drawDetectedObjectsWithClassificationsFromInference(results)
-        
-        frameStats = "Frame"
-        statsRowHeight = 25
-        rows = 2
-        statsHeight = statsRowHeight*rows
-        statsImage = np.zeros([statsHeight,results['width'],3],dtype=np.uint8)
-        
-        results['color'] = (255,255,255)
-        statsImage = self.drawStatsDashboard("Wallaroo Computer Vision Statistics Dashboard", results)
-        image = cv2.vconcat([statsImage,image])
-
-        # show the output image
-        self.pltImshow("Output", image)
-        
-    def drawDetectedObjectsWithClassificationsFromInference(self, results):
-        infResults = results['inf-results']
-        if isinstance(infResults, pd.DataFrame):
-            boxList = infResults['out.boxes'].tolist()
-            classes = infResults['out.classes'].tolist()[0]
-            results['classes'] = classes
-            confidences = infResults['out.confidences'].tolist()[0]
-            results['confidences'] = confidences
-        else:
-            outputs = infResults['outputs']
-            boxes = outputs[0]
-
-            #used later in dashboard
-            results['boxes'] = boxes
-
-            classes = outputs[1]['Int64']['data']
-            #used later in dashboard
-            results['classes'] = classes
-
-            confidences = outputs[2]['Float']['data']
-            results['confidences'] = confidences
-        
-        
-            # Reshape box coord inferences to array with 4 elements (x,y,w,h)
-            boxList = boxes['Float']['data']
-        
-        boxA = np.array(boxList)
-        boxes = boxA.reshape(-1, 4)
-        boxes = boxes.astype(int)
-        results['boxes'] = boxes
-
-        image = results['image']
-        modelName = results['model_name']
-        infTime = "{:.2f}".format(results['inference-time'])
-        #self.print("drawDetectedObjectsWithClassification boxes"+str(boxes))
-        self.debug("confidence-target="+str(results['confidence-target']))
-         
-        for i in range(0, len(boxes)):
-            # extract the confidence (i.e., probability) associated with the
-            # classification prediction
-            confidence = confidences[i]
-
-            # filter out weak detections by ensuring the confidence is
-            # greater than the minimum confidence
-              # display the prediction to our terminal
-
-
-            if confidence > results['confidence-target']:
-                idx = int(classes[i])
-                cocoClasses = self.getCocoClasses()
-                label = "{}: {:.2f}%".format(cocoClasses[idx], confidence * 100)
-                self.debug("[INFO] {}".format(label))
-                # extract the index of the class label from the detections,
-                # then compute the (x, y)-coordinates of the bounding box
-                # for the object
-                box = boxes[i]
-                (startX, startY, endX, endY) = box
-
-                color = results['color']
-                self.debug("color="+str(color))
-                 # draw the bounding box and label on the image
-                cv2.rectangle(image, (startX, startY), (endX, endY),
-                    color, 2)
-                y = startY - 15 if startY - 15 > 15 else startY + 15
-                cv2.putText(image, label, (startX, y),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-            
-        return image
-
-    def drawShadowDetectedObjectsFromInference(self, results, challenger):
-        image = self.drawShadowDetectedObjectsWithClassificationFromInference(results, challenger)
-        
-        frameStats = "Frame"
-        statsRowHeight = 25
-        rows = 2
-        statsHeight = statsRowHeight*rows
-        statsImage = np.zeros([statsHeight,results['width'],3],dtype=np.uint8)
-        
-        results['color'] = (255,255,255)
-        statsImage = self.drawStatsDashboard("Wallaroo Computer Vision Statistics Dashboard", results)
-        image = cv2.vconcat([statsImage,image])
-
-        # show the output image
-        self.pltImshow("Output", image)
-        
-    #
-    # Draws the challenger inferenced results on the image provided.
-    #
-    def drawShadowDetectedObjectsWithClassificationFromInference(self, results, challenger):
-        infResults = results['inf-results']
-        if isinstance(infResults, pd.DataFrame):
-            boxList = infResults[f'out_{challenger}.boxes'].tolist()
-            classes = infResults[f'out_{challenger}.classes'].tolist()[0]
-            results['classes'] = classes
-            confidences = infResults[f'out_{challenger}.confidences'].tolist()[0]
-            results['confidences'] = confidences
-        else:
-            outputs = infResults['shadow_data']
-            boxes = outputs[challenger][0]
-        
-            #used later in dashboard
-            results['boxes'] = boxes
-                
-            classes = outputs[challenger][1]['Int64']['data']
-            #used later in dashboard
-            results['classes'] = classes
-        
-            confidences = outputs[challenger][2]['Float']['data']
-            results['confidences'] = confidences
-               
-            # Reshape box coord inferences to array with 4 elements (x,y,w,h)
-            boxList = boxes['Float']['data']
-            
-        boxA = np.array(boxList)
-        boxes = boxA.reshape(-1, 4)
-        boxes = boxes.astype(int)
-        results['boxes'] = boxes
-        
-        classes = results['classes']
-        image = results['image']
-        modelName = results['model_name']
-        infTime = "{:.2f}".format(results['inference-time'])
-        #self.print("drawDetectedObjectsWithClassification boxes"+str(boxes))
-        self.debug("confidence-target="+str(results['confidence-target']))
-        
-
-        for i in range(0, len(boxes)):
-            # extract the confidence (i.e., probability) associated with the
-            # classification prediction
-            confidence = confidences[i]
-
-            # filter out weak detections by ensuring the confidence is
-            # greater than the minimum confidence
-              # display the prediction to our terminal
-
-            if confidence > results['confidence-target']:
-                idx = int(classes[i])
-                cocoClasses = self.getCocoClasses()
-                label = "{}: {:.2f}%".format(cocoClasses[idx], confidence * 100)
-                self.debug("[INFO] {}".format(label))
-                # extract the index of the class label from the detections,
-                # then compute the (x, y)-coordinates of the bounding box
-                # for the object
-                box = boxes[i]
-                (startX, startY, endX, endY) = box
-
-                color = results['color']
-                self.debug("color="+str(color))
-                 # draw the bounding box and label on the image
-                cv2.rectangle(image, (startX, startY), (endX, endY),
-                    color, 2)
-                y = startY - 15 if startY - 15 > 15 else startY + 15
-                cv2.putText(image, label, (startX, y),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-
-        return image   
-
-    #
-    # Loads the image and mean normalizes it for use with the face detector model
-    #
-    def load_image_mean_normalize_face(self, image_path, width, height):
-        orig_image = cv2.imread(image_path)
-        orig_image_resized = cv2.resize(orig_image, (width, height))
-        image = self.mean_normalize_face(orig_image_resized)
-      
-        return image, orig_image_resized
-    
-    #
-    # load and resize image
-    #
-    def load_image_and_resize(self, image_path, width, height):
-        image = cv2.imread(image_path)      
-        return cv2.resize(image, (width, height))
-    
-    #
-    # Loads the image and mean normalizes it for use with the face detector model
-    #
-    def mean_normalize_face(self, image):
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image_mean = np.array([127, 127, 127])
-        image = (image - image_mean) / 128
-        image = np.transpose(image, [2, 0, 1])
-        image = np.expand_dims(image, axis=0)
-        image = image.astype(np.float32)
-        
-        return image
-    
-    def mean_normalize_gender(self, orig_image):
-        # gender classification method
-        image = cv2.cvtColor(orig_image, cv2.COLOR_BGR2RGB)
-        image = cv2.resize(image, (224, 224))
-        image_mean = np.array([104, 117, 123])
-        image = image - image_mean
-        image = np.transpose(image, [2, 0, 1])
-        image = np.expand_dims(image, axis=0)
-        image = image.astype(np.float32)
-        
-        return image
-    
-    def mean_normalize_age(self, orig_image):
-        # gender classification method
-        image = cv2.cvtColor(orig_image, cv2.COLOR_BGR2RGB)
-        image = cv2.resize(image, (224, 224))
-        image_mean = np.array([104, 117, 123])
-        image = image - image_mean
-        image = np.transpose(image, [2, 0, 1])
-        image = np.expand_dims(image, axis=0)
-        image = image.astype(np.float32)
-        
-        return image
-
-
-    @staticmethod
-    def area_of(left_top, right_bottom):
-        """
-        Compute the areas of rectangles given two corners.
-        Args:
-            left_top (N, 2): left top corner.
-            right_bottom (N, 2): right bottom corner.
-        Returns:
-            area (N): return the area.
-        """
-        hw = np.clip(right_bottom - left_top, 0.0, None)
-        return hw[..., 0] * hw[..., 1]
-
-    @staticmethod
-    def iou_of(boxes0, boxes1, eps=1e-5):
-        """
-        Return intersection-over-union (Jaccard index) of boxes.
-        Args:
-            boxes0 (N, 4): ground truth boxes.
-            boxes1 (N or 1, 4): predicted boxes.
-            eps: a small number to avoid 0 as denominator.
-        Returns:
-            iou (N): IoU values.
-        """
-        overlap_left_top = np.maximum(boxes0[..., :2], boxes1[..., :2])
-        overlap_right_bottom = np.minimum(boxes0[..., 2:], boxes1[..., 2:])
-
-        overlap_area = CVDemo.area_of(overlap_left_top, overlap_right_bottom)
-        area0 = CVDemo.area_of(boxes0[..., :2], boxes0[..., 2:])
-        area1 = CVDemo.area_of(boxes1[..., :2], boxes1[..., 2:])
-        return overlap_area / (area0 + area1 - overlap_area + eps)
-
-    @staticmethod
-    def hard_nms(box_scores, iou_threshold, top_k=-1, candidate_size=200):
-        """
-        Perform hard non-maximum-supression to filter out boxes with iou greater
-        than threshold
-        Args:
-            box_scores (N, 5): boxes in corner-form and probabilities.
-            iou_threshold: intersection over union threshold.
-            top_k: keep top_k results. If k <= 0, keep all the results.
-            candidate_size: only consider the candidates with the highest scores.
-        Returns:
-            picked: a list of indexes of the kept boxes
-        """
-        scores = box_scores[:, -1]
-        boxes = box_scores[:, :-1]
-        picked = []
-        indexes = np.argsort(scores)
-        indexes = indexes[-candidate_size:]
-        while len(indexes) > 0:
-            current = indexes[-1]
-            picked.append(current)
-            if 0 < top_k == len(picked) or len(indexes) == 1:
-                break
-            current_box = boxes[current, :]
-            indexes = indexes[:-1]
-            rest_boxes = boxes[indexes, :]
-            iou = CVDemo.iou_of(
-                rest_boxes,
-                np.expand_dims(current_box, axis=0),
-            )
-            indexes = indexes[iou <= iou_threshold]
-
-        return box_scores[picked, :]
-    
-    @staticmethod
-    def predictions_above_threshold(width, height, confidences, boxes, prob_threshold, iou_threshold=0.5, top_k=-1):
-        """
-        Select boxes that contain human faces
-        Args:
-            width: original image width
-            height: original image height
-            confidences (N, 2): confidence array
-            boxes (N, 4): boxes array in corner-form
-            iou_threshold: intersection over union threshold.
-            top_k: keep top_k results. If k <= 0, keep all the results.
-        Returns:
-            boxes (k, 4): an array of boxes kept
-            labels (k): an array of labels for each boxes kept
-            probs (k): an array of probabilities for each boxes being in corresponding labels
-        """
-        #boxes = boxes[0]
-        #confidences = confidences[0]
-        #print(boxes)
-        #print(confidences)
-
-        picked_box_probs = []
-        picked_labels = []
-        for class_index in range(1, confidences.shape[1]):
-            #print(confidences.shape[1])
-            probs = confidences[:, class_index]
-            #print(probs)
-            mask = probs > prob_threshold
-            probs = probs[mask]
-
-            if probs.shape[0] == 0:
-                continue
-            subset_boxes = boxes[mask, :]
-            #print(subset_boxes)
-            box_probs = np.concatenate([subset_boxes, probs.reshape(-1, 1)], axis=1)
-            box_probs = CVDemo.hard_nms(box_probs,
-               iou_threshold=iou_threshold,
-               top_k=top_k,
-               )
-            picked_box_probs.append(box_probs)
-            picked_labels.extend([class_index] * box_probs.shape[0])
-        if not picked_box_probs:
-            return np.array([]), np.array([]), np.array([])
-        picked_box_probs = np.concatenate(picked_box_probs)
-        picked_box_probs[:, 0] *= width
-        picked_box_probs[:, 1] *= height
-        picked_box_probs[:, 2] *= width
-        picked_box_probs[:, 3] *= height
-        return picked_box_probs[:, :4].astype(np.int32), np.array(picked_labels), picked_box_probs[:, 4]
-
-    # scale current rectangle to box
-    @staticmethod
-    def scale(box):
-        width = box[2] - box[0]
-        height = box[3] - box[1]
-        maximum = max(width, height)
-        dx = int((maximum - width)/2)
-        dy = int((maximum - height)/2)
-
-        bboxes = [box[0] - dx, box[1] - dy, box[2] + dx, box[3] + dy]
-        return bboxes
-
-    # crop image
-    @staticmethod
-    def crop_image(image, box):
-        num = image[box[1]:box[3], box[0]:box[2]]
-        return num
-
-    def display_detected_faces(self,resizedImage, boxes):
-        color = (255, 128, 0)
-        for i in range(boxes.shape[0]):
-            box = CVDemo.scale(boxes[i, :])
-            cv2.rectangle(resizedImage, (box[0], box[1]), (box[2], box[3]), color, 4)
-            #cv2.imshow('', orig_image)
-        #cv2.imwrite("face-out.jpg", resizedImage)
-        self.pltImshow("Image ", resizedImage)
-        
-    def extract_boxes_above_threshold(self, infer_results_df, threshold, width, height):
-        
-        # Reshape flattened boxes into a 2 dimensional array with 4 elements (x,y,w,h)
-        npArray = np.array(infer_results_df['out.boxes'][0])
-        boxes = npArray.reshape((-1, 4))
-        #print(f'out.boxes - {boxes.shape}')
-
-        # Reshape flattened boxes into a 2 dimensional array with 2 elements conf scores
-        npArray = np.array(infer_results_df['out.scores'][0])
-        scores = npArray.reshape((-1, 2))
-        #print(f'out.scores - {scores.shape}')
-        
-        # this will extract the predictions above threshold
-        boxes, labels, probs = self.predictions_above_threshold(width, height, scores, boxes,  threshold)
-        return boxes, labels, probs
-    
-    def crop_normalize_gender_image_for_box(self, box, i, resized_image):
-        cropped = cvDemo.crop_image(resized_image, box)
-        #cvDemo.pltImshow("Image ", cropped)
-
-        mn_cropped_gender = cvDemo.mean_normalize_gender(cropped)
-
-        input_df = pd.DataFrame({"tensor":[mn_cropped_gender]})
-        return input_df
-
-    def crop_normalize_image_for_box(self, box, i, resized_image):
-        cropped = self.crop_image(resized_image, box)
-        #cvDemo.pltImshow("Image ", cropped)
-
-        mn_cropped_age = self.mean_normalize_age(cropped)
-
-        input_df = pd.DataFrame({"tensor":[mn_cropped_age]})
-        return input_df
-  
-
-    def extract_best_prediction(self, predictions):
-        pred_list = predictions['out.loss3/loss3_Y'].values
-        pred_a = np.array(pred_list[0])
-        idx = np.argmax(pred_a)
-        return idx
-    
-    def extract_frame_from_topic(self,msg):
-        message_data = json.loads(msg.value)
-        image_base64 = message_data.get('frame')
-       
-        # Decode the base64-encoded image to bytes
-        image_bytes = base64.b64decode(image_base64)
-
-        # Convert bytes to a numpy array using OpenCV
-        image_np_array = np.frombuffer(image_bytes, dtype=np.uint8)
-
-        # Decode the numpy array into an image using OpenCV
-        image = cv2.imdecode(image_np_array, flags=cv2.IMREAD_COLOR)
-        message_data['image'] = image
-        return message_data
-  
