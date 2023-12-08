@@ -25,7 +25,10 @@ import wallaroo
 import pandas as pd
 import base64
 
-from keras.utils.np_utils import normalize
+
+import tensorflow as tf
+
+from tensorflow.keras.utils import normalize
 
 
 #
