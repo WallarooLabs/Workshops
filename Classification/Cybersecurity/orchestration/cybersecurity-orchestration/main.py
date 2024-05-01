@@ -10,12 +10,12 @@ arguments = wl.task_args()
 if "workspace_name" in arguments:
     workspace_name = arguments['workspace_name']
 else:
-    workspace_name="forecast-model-workshop"
+    workspace_name="workshop-workspace-john"
 
 if "pipeline_name" in arguments:
     pipeline_name = arguments['pipeline_name']
 else:
-    pipeline_name="bikedaypipe"
+    pipeline_name="aloha-prime"
 
 
 print(f"Workspace: {workspace_name}")
@@ -31,5 +31,5 @@ print(pipeline)
 
 print(pipeline.status())
 
-inference_result = pipeline.infer_from_file('./data/test_data.df.json')
+inference_result = pipeline.infer_from_file('./data/data-1k.df.json')
 print(inference_result)
