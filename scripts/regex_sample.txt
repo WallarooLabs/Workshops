@@ -1,0 +1,10 @@
+   "outputs": \[\],\n   "source": \[\n    ("## blank space.*?\\n"),\n[\s\S\r]+?\]\n  \}
+   
+   re: "outputs": [],\n   "source": [\n    $1\n   ]\n  }
+
+
+Deletes these:
+## a blank space
+
+Keeps these:
+# run this
