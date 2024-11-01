@@ -17,29 +17,15 @@ if "pipeline_name" in arguments:
 else:
     pipeline_name="bikedaypipe"
 
-def get_workspace(name):
-    workspace = None
-    for ws in wl.list_workspaces():
-        if ws.name() == name:
-            workspace= ws
-    return workspace
-
-def get_pipeline(name):
-    try:
-        pipeline = wl.pipelines_by_name(name)[0]
-    except EntityNotFoundError:
-        print(f"Pipeline not found:{name}")
-    return pipeline
-
 print(f"Workspace: {workspace_name}")
-workspace = get_workspace(workspace_name)
+workspace = wl.get_workspace(workspace_name)
 
 wl.set_current_workspace(workspace)
 print(workspace)
 
 # the pipeline is assumed to be deployed
 print(f"Pipeline: {pipeline_name}")
-pipeline = get_pipeline(pipeline_name)
+pipeline = wl.get_pipeline(pipeline_name)
 print(pipeline)
 
 print(pipeline.status())
