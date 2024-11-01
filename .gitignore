@@ -15,3 +15,4 @@ LLM/Summarization/models/model-auto-conversion_hugging-face_complex-pipelines_hf
 Edge-Deployment/models/llm-summarization/model-auto-conversion_hugging-face_complex-pipelines_hf-summarisation-bart-large-samsun.zip
 environment.env
 Computer Vision/Retail/models/model-with-pixel-intensity.zip
+Computer Vision/Retail/models/model-with-pixel-intensity/frcnn-resnet.pt.onnx
