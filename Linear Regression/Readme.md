@@ -1,1 +1,0 @@
-This is the parent repo for the Linear Regression use cases for ML practitioner workshop content
