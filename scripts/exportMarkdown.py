@@ -24,117 +24,255 @@ c.NbConvertApp.export_format = "markdown"
 docs_directory = "docs/markdown"
 
 fileList = [
-    # {
-    #     "inputFile": "Classification/FinServ/Notebooks\ with\ Code/N1_deploy_a_model-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/classification/finserv",
-    #     "outputFile": "01-use-case-classification-finserv-reference.md"
-    # },
-    # {
-    #     "inputFile": "Classification/FinServ/Notebooks\ with\ Code/N2_production_experiments-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/classification/finserv",
-    #     "outputFile": "02-use-case-classification-finserv-reference.md"
-    # },
-    # {
-    #     "inputFile": "Classification/FinServ/Notebooks\ with\ Code/N3_validation_rules-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/classification/finserv",
-    #     "outputFile": "03-use-case-classification-finserv-reference.md"
-    # },
-    # {
-    #     "inputFile": "Classification/FinServ/Notebooks\ with\ Code/N4_drift_detection-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/classification/finserv",
-    #     "outputFile": "04-use-case-classification-finserv-reference.md"
-    # },
-    # {
-    #     "inputFile": "Computer\ Vision/Retail/Notebooks-with-code/N1_deploy_a_model-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/cv/retail",
-    #     "outputFile": "01-use-case-cv-retail-reference.md"
-    # },
-    # {
-    #     "inputFile": "Computer\ Vision/Retail/Notebooks-with-code/N2_production_experiments-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/cv/retail",
-    #     "outputFile": "02-use-case-cv-retail-reference.md"
-    # },
-    # {
-    #     "inputFile": "Computer\ Vision/Retail/Notebooks-with-code/N3_drift_detection-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/cv/retail",
-    #     "outputFile": "03-use-case-cv-retail-reference.md"
-    # },
-    # {
-    #     "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N1_deploy_a_model-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/forecasting/retail-cpg",
-    #     "outputFile": "01-use-case-forecasting-retail-cpg-reference.md"
-    # },
-    # {
-    #     "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N2_production_experiments-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/forecasting/retail-cpg",
-    #     "outputFile": "02-use-case-forecasting-retail-cpg-reference.md"
-    # },
-    # {
-    #     "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N3_drift_detection-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/forecasting/retail-cpg",
-    #     "outputFile": "03-use-case-forecasting-retail-cpg-reference.md"
-    # },
-    # {
-    #     "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N4_automate-data-connections-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/forecasting/retail-cpg",
-    #     "outputFile": "04-use-case-forecasting-retail-cpg-reference.md"
-    # },
-    # {
-    #     "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N5_automate-ml-orchestration-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/forecasting/retail-cpg",
-    #     "outputFile": "05-use-case-forecasting-retail-cpg-reference.md"
-    # },
-    # {
-    #     "inputFile": "Linear\ Regression/Real\ Estate/Notebooks-with-code/N1_deploy_a_model-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
-    #     "outputFile": "01-use-case-linear-regression-real-estate-reference.md"
-    # },
-    # {
-    #     "inputFile": "Linear\ Regression/Real\ Estate/Notebooks-with-code/N2_production_experiments-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
-    #     "outputFile": "02-use-case-linear-regression-real-estate-reference.md"
-    # },
-    # {
-    #     "inputFile": "Linear\ Regression/Real\ Estate/Notebooks-with-code/N3_validation_rules-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
-    #     "outputFile": "03-use-case-linear-regression-real-estate-reference.md"
-    # },
-    # {
-    #     "inputFile": "Linear\ Regression/Real\ Estate/Notebooks-with-code/N4_drift_detection-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
-    #     "outputFile": "04-use-case-linear-regression-real-estate-reference.md"
-    # },
-    # {
-    #     "inputFile": "Linear\ Regression/Real\ Estate/Notebooks-with-code/N5_automate-data-connections-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
-    #     "outputFile": "05-use-case-linear-regression-real-estate-reference.md"
-    # },
-    # {
-    #     "inputFile": "Linear\ Regression/Real\ Estate/Notebooks-with-code/N6_automate-ml-orchestration-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
-    #     "outputFile": "06-use-case-linear-regression-real-estate-reference.md"
-    # },
-    # {
-    #     "inputFile": "NLP_Classification/Sentiment\ Analysis/Notebooks\ with\ code/N1_deploy_a_model-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/nlp-classification/sentiment-analysis",
-    #     "outputFile": "01-use-case-nlp-classification-sentiment-analysis-reference.md"
-    # },
-    # {
-    #     "inputFile": "NLP_Classification/Sentiment\ Analysis/Notebooks\ with\ code/N2_validation_rules-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/nlp-classification/sentiment-analysis",
-    #     "outputFile": "02-use-case-nlp-classification-sentiment-analysis-reference.md"
-    # },
-    # {
-    #     "inputFile": "NLP_Classification/Sentiment\ Analysis/Notebooks\ with\ code/N3_drift_detection-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/nlp-classification/sentiment-analysis",
-    #     "outputFile": "03-use-case-nlp-classification-sentiment-analysis-reference.md"
-    # },
-    # {
-    #     "inputFile": "Classification/FinServ/Notebooks\ with\ Code/N1_deploy_a_model-with-code.ipynb",
-    #     "outputDir": "/wallaroo-use-case-tutorials/classification/finserv",
-    #     "outputFile": "01-use-case-classification-finserv-reference.md"
-    # },
-
+    ## Classification - Cybersecurity
+    {
+        "inputFile": "Classification/Cybersecurity/Notebooks-with-code/N1_deploy_a_model-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/classification/cybersecurity",
+        "outputFile": "N1_deploy_a_model-with-code-reference.md"
+    },
+    {
+        "inputFile": "Classification/Cybersecurity/Notebooks-with-code/N2_production_experiments-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/classification/cybersecurity",
+        "outputFile": "N2_production_experiments-with-code-reference.md"
+    },
+    {
+        "inputFile": "Classification/Cybersecurity/Notebooks-with-code/N3_validation_rules-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/classification/cybersecurity",
+        "outputFile": "N3_validation_rules-with-code-reference.md"
+    },
+    {
+        "inputFile": "Classification/Cybersecurity/Notebooks-with-code/N4_drift_detection-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/classification/cybersecurity",
+        "outputFile": "N4_drift_detection-with-code-reference.md"
+    },
+    {
+        "inputFile": "Classification/Cybersecurity/Notebooks-with-code/N5_automate-data-connections-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/classification/cybersecurity",
+        "outputFile": "N5_automate-data-connections-with-code-reference.md"
+    },
+    {
+        "inputFile": "Classification/Cybersecurity/Notebooks-with-code/N6_automate-ml-orchestration-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/classification/cybersecurity",
+        "outputFile": "N6_automate-ml-orchestration-with-code-reference.md"
+    },
+    {
+        "inputFile": "Classification/Cybersecurity/Notebooks-with-code/N7_publish_pipeline_for_edge-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/classification/cybersecurity",
+        "outputFile": "N7_publish_pipeline_for_edge-with-code-reference.md"
+    },
+    ## Classification - FinServ
+    {
+        "inputFile": "Classification/FinServ/Notebooks-with-code/N1_deploy_a_model-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/classification/finserv",
+        "outputFile": "N1_deploy_a_model-with-code-reference.md"
+    },
+    {
+        "inputFile": "Classification/FinServ/Notebooks-with-code/N2_production_experiments-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/classification/finserv",
+        "outputFile": "N2_production_experiments-with-code-reference.md"
+    },
+    {
+        "inputFile": "Classification/FinServ/Notebooks-with-code/N3_validation_rules-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/classification/finserv",
+        "outputFile": "N3_validation_rules-with-code-reference.md"
+    },
+    {
+        "inputFile": "Classification/FinServ/Notebooks-with-code/N4_drift_detection-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/classification/finserv",
+        "outputFile": "N4_drift_detection-with-code-reference.md"
+    },
+    {
+        "inputFile": "Classification/FinServ/Notebooks-with-code/N5_automate-data-connections-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/classification/finserv",
+        "outputFile": "N5_automate-data-connections-with-code-reference.md"
+    },
+    {
+        "inputFile": "Classification/FinServ/Notebooks-with-code/N6_publish_pipeline_for_edge-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/classification/finserv",
+        "outputFile": "N6_publish_pipeline_for_edge-with-code-reference.md"
+    },
+    ## Computer-Vision - Healthcare
+    {
+        "inputFile": "Computer-Vision/Healthcare/Notebooks-with-code/N0-environment-prep-model-conversion.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/computer-vision/healthcare",
+        "outputFile": "N0-environment-prep-model-conversion-reference.md"
+    },
+    {
+        "inputFile": "Computer-Vision/Healthcare/Notebooks-with-code/N1_deploy_a_model-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/computer-vision/healthcare",
+        "outputFile": "N1_deploy_a_model-with-code-reference.md"
+    },
+    {
+        "inputFile": "Computer-Vision/Healthcare/Notebooks-with-code/N2_automate-data-connections-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/computer-vision/healthcare",
+        "outputFile": "N2_automate-data-connections-with-code-reference.md"
+    },
+    {
+        "inputFile": "Computer-Vision/Healthcare/Notebooks-with-code/N3_publish_pipeline_for_edge-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/computer-vision/healthcare",
+        "outputFile": "N3_publish_pipeline_for_edge-with-code-reference.md"
+    },
+    ## Computer-Vision - Retail
+    {
+        "inputFile": "Computer-Vision/Retail/N0-environment-prep-model-conversion.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/computer-vision/retail",
+        "outputFile": "N0-environment-prep-model-conversion-reference.md"
+    },
+    {
+        "inputFile": "Computer-Vision/Retail/Notebooks-with-code/N1_deploy_a_model-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/computer-vision/retail",
+        "outputFile": "N1_deploy_a_model-with-code-reference.md"
+    },
+    {
+        "inputFile": "Computer-Vision/Retail/Notebooks-with-code/N2_production_experiments-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/computer-vision/retail",
+        "outputFile": "N2_production_experiments-with-code-reference.md"
+    },
+    {
+        "inputFile": "Computer-Vision/Retail/Notebooks-with-code/N3_validation_rules-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/computer-vision/retail",
+        "outputFile": "N3_validation_rules-with-code-reference.md"
+    },
+    {
+        "inputFile": "Computer-Vision/Retail/Notebooks-with-code/N4_drift_detection-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/computer-vision/retail",
+        "outputFile": "N4_drift_detection-with-code-reference.md"
+    },
+    {
+        "inputFile": "Computer-Vision/Retail/Notebooks-with-code/N5_publsh_pipeline_for_edge-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/computer-vision/retail",
+        "outputFile": "N5_publsh_pipeline_for_edge-with-code-reference.md"
+    },
+    ## Computer-Vision - Yolov8
+    {
+        "inputFile": "Computer-Vision/Yolov8/Notebooks-with-code/N0-environment-prep-model-conversion.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/computer-vision/yolov8",
+        "outputFile": "N0-environment-prep-model-conversion-reference.md"
+    },
+    {
+        "inputFile": "Computer-Vision/Yolov8/Notebooks-with-code/N1_deploy_a_model-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/computer-vision/yolov8",
+        "outputFile": "N1_deploy_a_model-with-code-reference.md"
+    },
+    {
+        "inputFile": "Computer-Vision/Yolov8/Notebooks-with-code/N2_publish_pipeline_for_edge-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/computer-vision/yolov8",
+        "outputFile": "N2_publish_pipeline_for_edge-with-code-reference.md"
+    },
+    ## Forecasting - Retail CPG
+    {
+        "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N1_deploy_a_model-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/forecast/retail",
+        "outputFile": "N1_deploy_a_model-with-code-reference.md"
+    },
+    {
+        "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N2_production_experiments-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/forecast/retail",
+        "outputFile": "N2_production_experiments-with-code-reference.md"
+    },
+    {
+        "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N3_validation_rules-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/forecast/retail",
+        "outputFile": "N3_validation_rules-with-code-reference.md"
+    },
+    {
+        "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N4_drift_detection-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/forecast/retail",
+        "outputFile": "N4_drift_detection-with-code-reference.md"
+    },
+    {
+        "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N5_automate-data-connections-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/forecast/retail",
+        "outputFile": "N5_automate-data-connections-with-code-reference.md"
+    },
+    {
+        "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N6_automate-ml-orchestration-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/forecast/retail",
+        "outputFile": "N6_automate-ml-orchestration-with-code-reference.md"
+    },
+    {
+        "inputFile": "Forecasting/Retail-CPG/Notebooks-with-code/N7_publish_pipeline_for_edge-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/forecast/retail",
+        "outputFile": "N7_publish_pipeline_for_edge-with-code-reference.md"
+    },
+    ## Linear Regression - Real Estate
+    {
+        "inputFile": "Linear-Regression/Real-Estate/Notebooks-with-code/N1_deploy_a_model-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
+        "outputFile": "N1_deploy_a_model-with-code-reference.md"
+    },
+    {
+        "inputFile": "Linear-Regression/Real-Estate/Notebooks-with-code/N2_production_experiments-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
+        "outputFile": "N2_production_experiments-with-code-reference.md"
+    },
+    {
+        "inputFile": "Linear-Regression/Real-Estate/Notebooks-with-code/N3_validation_rules-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
+        "outputFile": "N3_validation_rules-with-code-reference.md"
+    },
+    {
+        "inputFile": "Linear-Regression/Real-Estate/Notebooks-with-code/N3_validation_rules-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
+        "outputFile": "N3_validation_rules-with-code-reference.md"
+    },
+    {
+        "inputFile": "Linear-Regression/Real-Estate/Notebooks-with-code/N4_drift_detection-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
+        "outputFile": "N4_drift_detection-with-code-reference.md"
+    },
+    {
+        "inputFile": "Linear-Regression/Real-Estate/Notebooks-with-code/N5_automate-data-connections-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
+        "outputFile": "N5_automate-data-connections-with-code-reference.md"
+    },
+    {
+        "inputFile": "Linear-Regression/Real-Estate/Notebooks-with-code/N6_automate-ml-orchestration-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
+        "outputFile": "N6_automate-ml-orchestration-with-code-reference.md"
+    },
+    {
+        "inputFile": "Linear-Regression/Real-Estate/Notebooks-with-code/N7_publish_pipeline_for_edge-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/linear-regression/real-estate",
+        "outputFile": "N7_publish_pipeline_for_edge-with-code-reference.md"
+    },
+    ## LLM Summarization
+    {
+        "inputFile": "LLM/Summarization/Notebooks-with-code/N1_deploy_a_model-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/llm/summarization",
+        "outputFile": "N1_deploy_a_model-with-code-reference.md"
+    },
+    {
+        "inputFile": "LLM/Summarization/Notebooks-with-code/N2_automate-data-connections-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/llm/summarization",
+        "outputFile": "N2_automate-data-connections-with-code-reference.md"
+    },
+    {
+        "inputFile": "LLM/Summarization/Notebooks-with-code/N3_publsh_pipeline_for_edge-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/llm/summarization",
+        "outputFile": "N3_publsh_pipeline_for_edge-with-code-reference.md"
+    },
+    ## NLP Classification - Sentiment Analysis
+    {
+        "inputFile": "NLP_Classification/Sentiment-Analysis/Notebooks-with-code/N1_deploy_a_model-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/nlp-classification/sentiment-analysis",
+        "outputFile": "N1_deploy_a_model-with-code-reference.md"
+    },
+    {
+        "inputFile": "NLP_Classification/Sentiment-Analysis/Notebooks-with-code/N2_validation_rules-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/nlp-classification/sentiment-analysis",
+        "outputFile": "N2_validation_rules-with-code-reference.md"
+    },
+    {
+        "inputFile": "NLP_Classification/Sentiment-Analysis/Notebooks-with-code/N3_drift_detection-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/nlp-classification/sentiment-analysis",
+        "outputFile": "N3_drift_detection-with-code-reference.md"
+    },
+    {
+        "inputFile": "NLP_Classification/Sentiment-Analysis/Notebooks-with-code/N4_publish_pipeline_for_edge-with-code.ipynb",
+        "outputDir": "/wallaroo-use-case-tutorials/nlp-classification/sentiment-analysis",
+        "outputFile": "N4_publish_pipeline_for_edge-with-code-reference.md"
+    }
 ]
 
 def format(outputdir, document_file):
@@ -160,8 +298,8 @@ def format(outputdir, document_file):
     # fix image directories
     # ](01_notebooks_in_prod_explore_and_train-reference_files
     # image_replace = f'![png]({outputdir}'
-    document = re.sub('!\[png\]\(', f'![png](/images/2023.2.1{outputdir}/', document)
-    document = re.sub('\(./images', f'(/images/2023.2.1{outputdir}', document)
+    document = re.sub('!\[png\]\(', f'![png](/images/2024.2{outputdir}/', document)
+    document = re.sub('\(./images', f'(/images/2024.2{outputdir}', document)
     # move them all to Docsy figures
     document = re.sub(r'!\[(.*?)\]\((.*?)\)', r'{{<figure src="\2" width="800" label="\1">}}', document)
 
@@ -193,9 +331,9 @@ def main():
         os.system(convert_cmd)
         # format(f'{docs_directory}{currentFile["outputDir"]}/{currentFile["outputFile"]}')
         format(currentFile["outputDir"],currentFile["outputFile"])
-        move_images(currentFile["outputDir"])
+        #move_images(currentFile["outputDir"])
     # get rid of any extra markdown files
-    os.system("find ./images -name '*.md' -type f -delete")
+    #os.system("find ./images -name '*.md' -type f -delete")
 
 if __name__ == '__main__':
     main()

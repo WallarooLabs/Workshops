@@ -1,0 +1,1 @@
+This is the repo for the Insurance use case for Linear Regression workshop content

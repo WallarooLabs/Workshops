@@ -1,0 +1,11 @@
+opencv-python
+ultralytics
+torchvision
+torch
+opencv-python
+onnx
+onnxruntime
+imutils
+pytz
+ipywidgets
+tensorflow
