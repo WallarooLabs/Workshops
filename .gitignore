@@ -16,3 +16,14 @@ Edge-Deployment/models/llm-summarization/model-auto-conversion_hugging-face_comp
 environment.env
 Computer Vision/Retail/models/model-with-pixel-intensity.zip
 Computer Vision/Retail/models/model-with-pixel-intensity/frcnn-resnet.pt.onnx
+Computer-Vision/Retail/models/coco_classes.pickle
+Computer-Vision/Retail/models/frcnn-resnet.pt
+Computer-Vision/Retail/models/frcnn-resnet.pt.onnx
+Computer-Vision/Retail/models/mobilenet.pt
+Computer-Vision/Retail/models/mobilenet.pt.onnx
+Computer-Vision/Retail/models/model-with-pixel-intensity.zip
+Computer-Vision/Retail/models/post-process-drift-detection-arrow.py
+Computer-Vision/Retail/models/post-process-drift-detection.zip
+Computer-Vision/Retail/models/model-with-pixel-intensity/coco_classes.pickle
+Computer-Vision/Retail/models/model-with-pixel-intensity/frcnn-resnet.pt.onnx
+Computer-Vision/Retail/models/model-with-pixel-intensity/model-with-pixel-intensity.py
