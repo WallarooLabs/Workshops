@@ -65,7 +65,7 @@ display(workspace)
 
 ### Upload Computer Vision with Pixel Intensity Model
 
-For this example, we'll be using a different Bring Your Own Predict (BYOP) of the same models used before, but this time we have an additional output field:  `avg_px_intensity`. This takes the incoming images and averages out their pixel intensity.  Typically the higher the value, the more blurred and indistinct the image is.
+For this example, we'll be using a different Wallaroo Custom Models aka Bring Your Own Predict (BYOP), but this time we have an additional output field:  `avg_px_intensity`. This takes the incoming images and averages out their pixel intensity.  Typically the higher the value, the more blurred and indistinct the image is.
 
 We'll upload it with the following.  Adjust the variable names as best fit your preferences.
 
